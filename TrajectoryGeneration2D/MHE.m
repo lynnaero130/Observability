@@ -1,4 +1,4 @@
-function xt = MHE(x_real,u, z, dt,K)
+function xt = MHE(x_real,u, z, dt,K,source)
 % This function is used to accomplish MHE.
 % x_real: ground truth
 % x0: the second estimate in the last calculate
@@ -17,7 +17,7 @@ for i = init_i:K
 %     x2_minus = xt(:,i-opt_length+2);
     z_mhe = z(:,i-opt_length+1:i);
     u_mhe = u(:,i-opt_length+1:i);
-    X = fmincon(@(x)MHE_obj(x, x0_bar, x0_bar, z_mhe),x_initial_guess,[],[],[],[],[],[],@(x)MHE_constraint(x,u_mhe,opt_length,dt),options);
+    X = fmincon(@(x)MHE_obj(x, x0_bar, x0_bar, z_mhe,source),x_initial_guess,[],[],[],[],[],[],@(x)MHE_constraint(x,u_mhe,opt_length,dt),options);
     xt(:,i) = X(1:2,end);
     fprintf('Iteration = %d\n', i)
 end

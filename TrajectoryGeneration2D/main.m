@@ -55,15 +55,18 @@ clc;
 [X_Cov_real, z_Cov, u_Cov] = cal_real(X_Cov,x0,K,sigma_omega,source,sigma_v,dt);
 
 % estimation
-x_OG_estimate = MHE(X_OG(3:4,:),u_OG, z_OG,dt,K);
-x_Cov_estimate = MHE(X_Cov(3:4,:),u_Cov,z_Cov, dt,K);
+x_OG_estimate = MHE(X_OG(3:4,:),u_OG, z_OG,dt,K,source);
+x_Cov_estimate = MHE(X_Cov(3:4,:),u_Cov,z_Cov, dt,K,source);
 
-% plot
+%% plot
 figure(4)
 t = dt*(1:K);
 subplot(2,1,1)
-plot(x_OG_estimate(1,:),x_OG_estimate(2,:),'r-',X_OG(3,:),X_OG(4,:),'b--')
-legend('x_estimate','ground truth')
+plot(t,x_OG_estimate(1,:),'r--',t,X_OG(3,:),'r-')
+hold on
+plot(t,x_OG_estimate(2,:),'b--',t,X_OG(4,:),'b-')
+legend('x_{hat}','x_g','y_{hat}','y_g')
+ylabel('Position')
 title('OG\_based')
 subplot(2,1,2)
 error_OG=X_OG(3:4,:)-x_OG_estimate,2;
@@ -73,11 +76,16 @@ ylabel('estimation error')
 
 figure(5)
 subplot(2,1,1)
-plot(x_Cov_estimate(1,:),x_Cov_estimate(2,:),'r-',X_Cov(3,:),X_Cov(4,:),'b--')
-legend('x_estimate','ground truth')
+plot(t,x_Cov_estimate(1,:),'r--',t,X_Cov(3,:),'r-')
+hold on
+plot(t,x_Cov_estimate(2,:),'b--',t,X_Cov(4,:),'b-')
+legend('x_{hat}','x_g','y_{hat}','y_g')
+ylabel('Position')
 title('Cov\_based')
+set(gca,'YLim',[-4 4]);
 subplot(2,1,2)
 error_Cov=X_Cov(3:4,:)-x_Cov_estimate,2;
 error_Cov_norm = sqrt(error_Cov(1,:).^2 + error_Cov(2,:).^2);
 plot(t,error_Cov_norm,'k-')
+set(gca,'YLim',[0 4]);
 ylabel('estimation error')

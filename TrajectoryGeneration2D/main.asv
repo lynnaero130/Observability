@@ -1,4 +1,4 @@
-%% initialize
+%% Initialize
 clc;clear
 K = 100;
 x0 = [-1.5;-0.5]; % use prediction as initial guess
@@ -48,29 +48,37 @@ figure(3)
 plot(tr_x,tr_OG,'b*-.',tr_x,tr_Cov,'kx-')
 legend('OG\_based','Cov\_based')
 
-%% real trajectory and observation
+%% MHE
 clc;
+% Observation result z
 [X_OG_real, z_OG, u_OG] = cal_real(X_OG,x0,K,sigma_omega,source,sigma_v,dt);
 [X_Cov_real, z_Cov, u_Cov] = cal_real(X_Cov,x0,K,sigma_omega,source,sigma_v,dt);
 
-x_OG_estimate = MHE(X_OG(3:4,:),u_OG, z_OG,dt,K);
-x_Cov_estimate = MHE(X_Cov(3:4,:),u_Cov,z_Cov, dt,K);
+% estimation
+x_OG_estimate = MHE(X_OG(3:4,:),u_OG, z_OG,dt,K,source);
+x_Cov_estimate = MHE(X_Cov(3:4,:),u_Cov,z_Cov, dt,K,source);
 
 % plot
 figure(4)
 t = dt*(1:K);
 subplot(2,1,1)
+plot(t,x_OG_estimate(1,:),'r-',X_OG(3,:),X_OG(4,:),'b--')
 plot(x_OG_estimate(1,:),x_OG_estimate(2,:),'r-',X_OG(3,:),X_OG(4,:),'b--')
-subplot(2,2,1)
-error = X_OG(3:4,:)-x_OG_estimate,2;
-error_norm = sqrt(error(1,:).^2 + error(2,:).^2);
-plot(t,error_norm,'k-')
+legend('x_estimate','ground truth')
+title('OG\_based')
+subplot(2,1,2)
+error_OG=X_OG(3:4,:)-x_OG_estimate,2;
+error_OG_norm = sqrt(error_OG(1,:).^2 + error_OG(2,:).^2);
+plot(t,error_OG_norm,'k-')
+ylabel('estimation error')
 
 figure(5)
-t = dt*(1:K);
 subplot(2,1,1)
-plot(x_OG_estimate(1,:),x_OG_estimate(2,:),'r-',X_OG(3,:),X_OG(4,:),'b--')
-subplot(2,2,1)
-error = X_OG(3:4,:)-x_OG_estimate,2;
-error_norm = sqrt(error(1,:).^2 + error(2,:).^2);
-plot(t,error_norm,'k-')
+plot(x_Cov_estimate(1,:),x_Cov_estimate(2,:),'r-',X_Cov(3,:),X_Cov(4,:),'b--')
+legend('x_estimate','ground truth')
+title('Cov\_based')
+subplot(2,1,2)
+error_Cov=X_Cov(3:4,:)-x_Cov_estimate,2;
+error_Cov_norm = sqrt(error_Cov(1,:).^2 + error_Cov(2,:).^2);
+plot(t,error_Cov_norm,'k-')
+ylabel('estimation error')
