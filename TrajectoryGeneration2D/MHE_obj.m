@@ -1,15 +1,18 @@
 function f = MHE_obj(x, x0_bar, x2_minus, z, u, source,dt)
 % The cost function of MHE
 gamma_1 = 1;
-gamma_2 = 0;
-gamma_3 = 0;
+gamma_2 = 1;
+gamma_3 = 1;
 
 obj = 0;
 A = diag([1,1]);
 B = diag([dt,dt]);
-x_bar(:, 1) = x0_bar; % the initial value of x_predict is x0
+
+x_bar(:, 1) = A*x0_bar + B*u(:, 1); % x2_bar
+for i = 1:length(u)-1
+    x_bar(:, i+1) = A*x(:, i) + B*u(:, i+1);  % predict x3_bar ~ x11_bar
+end
 for i = 1:length(u)
-    x_bar(:, i+1) = A*x(:, i) + B*u(:, i);  % predict
     t_obj = gamma_1 *(x_bar(:, i) - x(:, i))' * (x_bar(:, i) - x(:, i)); 
     
     x_relative = x(1:2,i) - source;
