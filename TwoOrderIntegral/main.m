@@ -1,23 +1,22 @@
 %% Initialize
 clc;clear
 K = 100;
-x0 = [-1.5;-0.5]; % use prediction as initial guess
-xg = [-1;2.25]; % end point
+x0 = [0;0;0]; % use prediction as initial guess
+xg = [1;1;1]; % end point
 rg = 0.1; % position tolerance
 ru = 0.8; % input constraint
-source = [0.2;0];
-sigma_x0 = [0.025 0.002;0.002 0.025];
-sigma_omega = diag([0.001,0.001]); % process noise
+source = [0.2;0;0]; % the position of uwb
+sigma_x0 = diag([0.001,0.001,0.001]);
+sigma_omega = diag([0.001,0.001,0.001]); % process noise
 sigma_v = 0.01; % observation noise
 dt = 0.1;
 t = dt*(0:K);
-x_initial_guess = ones(4,K);
+x_initial_guess = ones(6,K);
 
 %% OG-based Trajectory Planning Problem
 options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
-% [X_OG,fval] = fmincon(@(x)OG(x,x0,source),x_initial_guess,[],[],[],[],[],[],@(x)nonlcon(x,xg,rg,ru,x0,K,dt),options) % det
 [X_OG,fval] = fmincon(@(x)OG_cond(x,x0,source),x_initial_guess,[],[],[],[],[],[],@(x)nonlinear_constraint(x,xg,rg,ru,x0,K,dt),options) % condition number
-%X_OG(1:2,:) is u, X_OG(3:4,:) is x 
+%X_OG(1:3,:) is u, X_OG(4:6,:) is x 
 % plot
 figure(1)
 px = [x0(1) X_OG(3,:)];

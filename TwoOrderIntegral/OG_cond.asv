@@ -7,7 +7,7 @@ energy = sum(temp,2); % sum by columns
 
 x_plus = [x0 x(4:6,:)]; % K+1 dimension
 x_relative = x_plus - source;
-rt2 = x_relative(1,:).^2 + x_relative(2,:).^2 + x_relative(3,:).^2;
+rt2 = x_relative(1,:).^2 + x_relative(2,:).^2;
 OG = [sum(x_relative(1,:).^2./rt2,2) sum(x_relative(1,:).*x_relative(2,:)./rt2,2);
     sum(x_relative(1,:).*x_relative(2,:)./rt2,2) sum(x_relative(2,:).^2./rt2,2)]; % range only
 % OG = [sum(x_relative(1,:).^2,2) sum(x_relative(1,:).*x_relative(2,:),2);
