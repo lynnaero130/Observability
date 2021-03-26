@@ -1,20 +1,26 @@
 clc;clear
 syms dt x1 y1 z1 r1 x2 y2 z2 r2 x3 y3 z3 r3
-A = [1, 0, 0, dt, 0, 0;
-     0, 1, 0, 0, dt, 0;
-     0, 0, 1, 0, 0, dt;
-     0, 0, 0, 1, 0, 0;
-     0, 0, 0, 0, 1, 0;
-     0, 0, 0, 0, 0, 1;];
- Aa = [A zeros(6,6);
-       zeros(6,6) A];
-%  H = [x/r y/r z/r 0 0 0];
- Hh = [x1/r1 y1/r1 z1/r1 0 0 0 zeros(1,6);
-     zeros(3) eye(3)./dt zeros(3) -eye(3)./dt];
- Hh2 = [x2/r2 y2/r2 z2/r2 0 0 0 zeros(1,6);
-     zeros(3) eye(3)./dt zeros(3) -eye(3)./dt];
- Hh3 = [x3/r3 y3/r3 z3/r3 0 0 0 zeros(1,6);
-     zeros(3) eye(3)./dt zeros(3) -eye(3)./dt];
+
+ Aa = [eye(3)   eye(3)   -eye(3);
+       eye(3)   zeros(3) zeros(3);
+       zeros(3) eye(3)   zeros(3);];
+   
+% H = [x/r y/r z/r 0 0 0 zeros(1,3 ];
+Hh = [x1/r1 y1/r1 z1/r1 0 0 0 zeros(1,3);
+      eye(3)/dt^2 -2* eye(3)/dt^2  eye(3)/dt^2;
+]
+Hh2 = [x2/r2 y2/r2 z2/r2 0 0 0 zeros(1,3);
+      eye(3)/dt^2 -2* eye(3)/dt^2  eye(3)/dt^2;
+]
+Hh3 = [x3/r3 y3/r3 z3/r3 0 0 0 zeros(1,3);
+      eye(3)/dt^2 -2* eye(3)/dt^2  eye(3)/dt^2;
+]
+%  Hh = [x1/r1 y1/r1 z1/r1 0 0 0 zeros(1,6);
+%      zeros(3) eye(3)./dt zeros(3) -eye(3)./dt];
+%  Hh2 = [x2/r2 y2/r2 z2/r2 0 0 0 zeros(1,6);
+%      zeros(3) eye(3)./dt zeros(3) -eye(3)./dt];
+%  Hh3 = [x3/r3 y3/r3 z3/r3 0 0 0 zeros(1,6);
+%      zeros(3) eye(3)./dt zeros(3) -eye(3)./dt];
  OG = transpose(Hh*Aa)*Hh*Aa;
  OG = OG + transpose(Hh2*Aa^2)*Hh2*Aa^2;
  OG = OG + transpose(Hh3*Aa^3)*Hh3*Aa^3;
@@ -24,7 +30,7 @@ A = [1, 0, 0, dt, 0, 0;
 %     OG = OG + temp;
 %  end
 OG
-det(OG)
+trace(OG)
 
 return
 
