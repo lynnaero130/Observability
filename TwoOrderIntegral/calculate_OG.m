@@ -13,10 +13,11 @@ A = [1, 0, 0, dt, 0, 0;
      zeros(3) eye(3)./dt zeros(3) -eye(3)./dt]
  Hh2 = [x2/r2 y2/r2 z2/r2 0 0 0 zeros(1,6);
      zeros(3) eye(3)./dt zeros(3) -eye(3)./dt]
-Hh2 = [x2/r2 y2/r2 z2/r2 0 0 0 zeros(1,6);
+Hh3 = [x3/r3 y3/r3 z3/r3 0 0 0 zeros(1,6);
      zeros(3) eye(3)./dt zeros(3) -eye(3)./dt]
  OG = transpose(Hh*Aa)*Hh*Aa;
  OG = OG + transpose(Hh2*Aa^2)*Hh2*Aa^2;
+ OG = OG + transpose(Hh3*Aa^3)*Hh2*Aa^3;
 %  for i = 1:5
 % %     temp = transpose(H*A^i)*H*A^i;
 %     temp = transpose(Hh*Aa^i)*Hh*Aa^i;
