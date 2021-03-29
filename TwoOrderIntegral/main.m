@@ -27,6 +27,7 @@ plot3(px,py,pz,'s-')
 % set(gca,'YLim',[-0.6 2.5]);
 hold on
 plot3(xg(1),xg(2),xg(3),'om',x0(1),x0(2),x0(3),'dg',source(1),source(2),source(3),'*r')
+grid on
 %% MHE
 clc;
 % Observation result z
