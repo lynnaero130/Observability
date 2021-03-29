@@ -1,15 +1,18 @@
 %% Initialize
 clc;clear
-K = 8; %measure times
+K = 100; %measure times
 x0 = [0;0;0;0;0;0]; % use prediction as initial guess
-xg = [1;1;1;0;0;0]; % end point
+xg = [0.2;0.2;.0;0;0;0]; % end point
 rg = 0.01; % position tolerance
-ru = 9.8*2; % input constraint
-source = [0.2;0;0]; % the position of uwb
-dt = 0.1;
+ru = 2; % input constraint
+source = [0.5;0;0]; % the position of uwb
+dt = 0.02;
 t = dt*(0:K);
-x_initial_guess = ones(3,3*K);
 
+x_initial_guess = [zeros(3,K) zeros(3,K) zeros(3,K)];
+
+% x_initial_guess = rand(3,3*K);
+% x_initial_guess = ones(3,3*K);
 %% OG-based Trajectory Planning Problem
 clc;
 options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
@@ -27,11 +30,14 @@ plot3(px,py,pz,'s-')
 % set(gca,'YLim',[-0.6 2.5]);
 hold on
 plot3(xg(1),xg(2),xg(3),'om',x0(1),x0(2),x0(3),'dg',source(1),source(2),source(3),'*r')
+xlabel('x')
+ylabel('y')
+zlabel('z')
 grid on
 %% MHE
-clc;
-% Observation result z
-[X_OG_pre, z_OG, u_OG] = cal_real(X,x0,K,sigma_omega,source,sigma_v,dt);
-
-% estimation
-x_OG_estimate = MHE([x0 X(3:4,:)],u_OG, z_OG,dt,K,source); % K+1 dimension
+% clc;
+% % Observation result z
+% [X_OG_pre, z_OG, u_OG] = cal_real(X,x0,K,sigma_omega,source,sigma_v,dt);
+% 
+% % estimation
+% x_OG_estimate = MHE([x0 X(3:4,:)],u_OG, z_OG,dt,K,source); % K+1 dimension
