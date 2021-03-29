@@ -1,0 +1,16 @@
+function f = OG_obj(u,dt,K)
+% K denote the measure times
+%
+t = dt*1:K;
+delta_p(1,:) = 0.5*dt^2*u(1,:);
+for i = 2:K
+    delta_p(i,:) = delta_p(i-1,:) + 0.5*dt^2*u(i,:);
+end
+
+
+C = [2*delta_p 2*delta_p *
+    ];
+
+
+f = obj;
+

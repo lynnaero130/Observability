@@ -3,7 +3,7 @@ clc;clear
 K = 8; %measure times
 x0 = [0;0;0;0;0;0]; % use prediction as initial guess
 xg = [1;1;1;0;0;0]; % end point
-rg = 0.01; % position tolerance
+rg = 0.1; % position tolerance
 ru = 9.8*2; % input constraint
 source = [0.2;0;0]; % the position of uwb
 dt = 0.1;
@@ -20,8 +20,8 @@ options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',2000
 % plot
 figure(1)
 px = [x0(1) X(1,K+1:2*K)];
-py = [x0(2) X(2,K+1:2*K)];
-pz = [x0(3) X(3,K+1:2*K)];
+py = [x0(2) X(2,K+1:2*K)'];
+pz = [x0(3) X(3,K+1:2*K)'];
 plot3(px,py,pz,'s-')
 % set(gca,'XLim',[-2.5 1]);
 % set(gca,'YLim',[-0.6 2.5]);

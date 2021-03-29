@@ -56,6 +56,12 @@ xc = (x0+xg)./2;
 r = norm(xg - x0,2)/2;
 theta_0 = acos((xg(1)-xc(1))/r)+pi;
 X_sin = [-pi*r./10*sin(pi*t./10+theta_0);pi*r./10*cos(pi*t./10+theta_0);xc(1)+r*cos(pi*t./10+theta_0);xc(2)+r*sin(pi*t./10+theta_0)];
+figure(3)
+plot(X_sin(3,:),X_sin(4,:),'s-')
+set(gca,'XLim',[-2.5 1]);
+set(gca,'YLim',[-0.6 2.5]);
+hold on
+plot(xg(1),xg(2),'om',x0(1),x0(2),'dg',source(1),source(2),'*r')
 %% 
 % X_linear = [ones(1,length(t));cos(t);t;sin(t)];
 %% MHE
@@ -81,7 +87,7 @@ e_sin = plot_result(t,x_Sin_estimate,X_Sin_pre,X_sin(3:4,:),z_Sin,source,'Sinuso
 
 figure(7)
 plot(t,e_OG,'r',t,e_Cov,'b',t,e_sin,'k')
-legend('e\_OG','e\_Cov','e\_sinsin')
+legend('e\_OG','e\_Cov','e\_orthogonal')
 ylabel('Error')
 
 [mean(e_OG) mean(e_Cov) mean(e_sin);
