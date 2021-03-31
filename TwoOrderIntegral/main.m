@@ -37,8 +37,56 @@ grid on
 clc;close all
 sigma_omega =diag([0.001,0.001,0.001]); %diag([0,0,0]); % imu noise
 sigma_v = 0.001;%0; % observation noise
-[x_estimate,groundtruth] = Estimation(X,x0,source,sigma_omega,sigma_v,dt,K);
+
+groundtruth  = [x0 [X(:,K+1:2*K);X(:,2*K+1:3*K)]];
+
+% measured data
+[z_measured, u_measured] = cal_real(X,x0,sigma_omega,sigma_v,source,K);
+
+% % radical velocity
+% uwb_v =  [0,0];
+% for i = 2:K+1
+%     uwb_v(i) = abs(z_measured(i)-z_measured(i-1))/(dt);
+% end
+
+[b1,a1] = butter(2,0.5*dt,'low'); 
+filter_v = filtfilt(b1,a1,uwb_v);
+[b2,a2] = butter(2,5*dt,'low'); 
+filter_d = filtfilt(b2,a2,z_measured);
+uwb_v =  [0,0];
+for i = 2:K+1
+    uwb_v(i) = abs(filter_d(i)-filter_d(i-1))/(dt);
+end
+
+%MHE
+% x_estimate = MHE(groundtruth,u_measured,uwb_v, z_measured,dt,K,source);
+x_estimate = MHE(groundtruth,u_measured,uwb_v, filter_d,dt,K,source);
+%% plotres
 figure(2)
 e_OG = plot_result(t,x_estimate,groundtruth,'OG\_based');
+
 % figure(3)
 % frequency_analysis(x_estimate,dt)
+%% 
+% [b1,a1] = butter(2,0.5*dt,'low'); 
+% filter_v = filtfilt(b1,a1,uwb_v);
+% [b2,a2] = butter(2,5*dt,'low'); 
+% filter_d = filtfilt(b2,a2,z_measured);
+% uwb_v =  [0,0];
+% for i = 2:K+1
+%     uwb_v(i) = abs(filter_d(i)-filter_d(i-1))/(dt);
+% end
+
+figure(4)
+subplot(2,1,1)
+x_relative = groundtruth(1:3,:) - source;
+gdt_d = sqrt(x_relative(1,:).^2+x_relative(2,:).^2+x_relative(3,:).^2);
+plot(t,z_measured,t,filter_d,t,gdt_d)
+legend('measure','filter','groundtruth')
+ylabel('distance')
+figure(4)
+subplot(2,1,2)
+gdt_v = sqrt(groundtruth(4,:).^2+groundtruth(5,:).^2+groundtruth(6,:).^2);
+plot(t,uwb_v,t,filter_v,t,gdt_v)
+legend('measure','filter','groundtruth')
+ylabel('velocity')
