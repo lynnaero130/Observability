@@ -8,11 +8,10 @@ ru = 2; % input constraint
 source = [0.5;0;0]; % the position of uwb
 dt = 0.02;
 t = dt*(0:K);
-
-x_initial_guess = [zeros(3,K) zeros(3,K) zeros(3,K)];
-
+x_initial_guess = [zeros(3,K) ones(3,K) zeros(3,K)];
 % x_initial_guess = rand(3,3*K);
 % x_initial_guess = ones(3,3*K);
+
 %% OG-based Trajectory Planning Problem
 clc;
 options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
@@ -35,9 +34,11 @@ ylabel('y')
 zlabel('z')
 grid on
 %% MHE
-% clc;
-% % Observation result z
-% [X_OG_pre, z_OG, u_OG] = cal_real(X,x0,K,sigma_omega,source,sigma_v,dt);
-% 
-% % estimation
-% x_OG_estimate = MHE([x0 X(3:4,:)],u_OG, z_OG,dt,K,source); % K+1 dimension
+clc;close all
+sigma_omega =diag([0.001,0.001,0.001]); %diag([0,0,0]); % imu noise
+sigma_v = 0.001;%0; % observation noise
+[x_estimate,groundtruth] = Estimation(X,x0,source,sigma_omega,sigma_v,dt,K);
+figure(2)
+e_OG = plot_result(t,x_estimate,groundtruth,'OG\_based');
+% figure(3)
+% frequency_analysis(x_estimate,dt)

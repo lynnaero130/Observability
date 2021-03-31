@@ -12,7 +12,7 @@ title(graph_title)
 subplot(3,1,2)
 plot(t,estimate(1,:),'r--',t,groundtruth(1,:),'r-')
 hold on
-plot(t,estimate(2,:),'b--',t,groundtruth(2,:),'b-')
+plot(t,estimate(2,:),'b--',t,estimate(2,:),'b-')
 legend('x_{hat}','x_g','y_{hat}','y_g')
 ylabel('Position')
 subplot(3,1,3)

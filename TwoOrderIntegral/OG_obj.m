@@ -23,7 +23,7 @@ end
 
 C = [2*delta_p' second_c' 2*t t.^2];
 % obj = -abs(det(C'*C));
-% obj = cond(C'*C);
-obj = 1/(trace(C'*C)+0.01);
+eee = eigs(C'*C);
+obj = max(eee)/(min(eee)+0.01);
 f = obj;
 
