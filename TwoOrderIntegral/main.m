@@ -2,7 +2,7 @@
 clc;clear
 K = 100; %measure times
 x0 = [0;0;0;0;0;0]; % use prediction as initial guess
-xg = [0.2;0.2;.0;0;0;0]; % end point
+xg = [1;1;0;0;0;0]; % end point
 rg = 0.01; % position tolerance
 ru = 2; % input constraint
 source = [0.5;0;0]; % the position of uwb
@@ -43,14 +43,7 @@ groundtruth  = [x0 [X(:,K+1:2*K);X(:,2*K+1:3*K)]];
 % measured data
 [z_measured, u_measured] = cal_real(X,x0,sigma_omega,sigma_v,source,K);
 
-% % radical velocity
-% uwb_v =  [0,0];
-% for i = 2:K+1
-%     uwb_v(i) = abs(z_measured(i)-z_measured(i-1))/(dt);
-% end
-
-[b1,a1] = butter(2,0.5*dt,'low'); 
-filter_v = filtfilt(b1,a1,uwb_v);
+% % filter distance and velocity
 [b2,a2] = butter(2,5*dt,'low'); 
 filter_d = filtfilt(b2,a2,z_measured);
 uwb_v =  [0,0];
@@ -61,22 +54,13 @@ end
 %MHE
 % x_estimate = MHE(groundtruth,u_measured,uwb_v, z_measured,dt,K,source);
 x_estimate = MHE(groundtruth,u_measured,uwb_v, filter_d,dt,K,source);
-%% plotres
+%plotres
 figure(2)
 e_OG = plot_result(t,x_estimate,groundtruth,'OG\_based');
 
 % figure(3)
 % frequency_analysis(x_estimate,dt)
 %% 
-% [b1,a1] = butter(2,0.5*dt,'low'); 
-% filter_v = filtfilt(b1,a1,uwb_v);
-% [b2,a2] = butter(2,5*dt,'low'); 
-% filter_d = filtfilt(b2,a2,z_measured);
-% uwb_v =  [0,0];
-% for i = 2:K+1
-%     uwb_v(i) = abs(filter_d(i)-filter_d(i-1))/(dt);
-% end
-
 figure(4)
 subplot(2,1,1)
 x_relative = groundtruth(1:3,:) - source;
@@ -87,6 +71,6 @@ ylabel('distance')
 figure(4)
 subplot(2,1,2)
 gdt_v = sqrt(groundtruth(4,:).^2+groundtruth(5,:).^2+groundtruth(6,:).^2);
-plot(t,uwb_v,t,filter_v,t,gdt_v)
-legend('measure','filter','groundtruth')
+plot(t,uwb_v,t,gdt_v)
+legend('measure','groundtruth')
 ylabel('velocity')

@@ -1,9 +1,9 @@
 function f = MHE_obj(x, x0_bar, x2_minus, z, u, uwb_v, source,dt)
 % The cost function of MHE
 gamma_1 = 1;
-gamma_2 = 1;
+gamma_2 = 5;
 gamma_3 = 100;
-gamma_4 = 0.5;
+gamma_4 = 0;
 obj = 0;
 A = [1, 0, 0, dt, 0, 0;
      0, 1, 0, 0, dt, 0;

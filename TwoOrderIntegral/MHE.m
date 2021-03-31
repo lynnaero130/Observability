@@ -6,25 +6,20 @@ function xt = MHE(gdt,u, uwb_v, z, dt,K,source)
 % z: observation distance
 % dt: sampling time
 
-opt_length = 10; % use ten data to estimate one position
+opt_length = 15; % use ten data to estimate one position
 options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
 delta = 2;
 init_i = opt_length+delta; % 11
 xt(:,1:init_i) = gdt(:,1:init_i); % xt is used to store the estimation
 %% filter
 [b1,a1] = butter(2,1*dt,'low');  % butterworth filter, cutoff frequency: 0.01*dt/dt = 0.01Hz
-[b2,a2] = butter(4,5*dt,'low'); % butterworth filter, cutoff frequency: 5*dt/dt = 5Hz
+[b2,a2] = butter(4,10*dt,'low'); % butterworth filter, cutoff frequency: 5*dt/dt = 5Hz
 % filter ranging measurements
-y = filtfilt(b1,a1,z(1:init_i));
-v = filtfilt(b1,a1,uwb_v(1:init_i));
+y = z;
+v = uwb_v;
 
 for i = init_i:K
-    % calculate current ranging measurements & radical velocity, i-th
-    yt = filtfilt(b1,a1,z(1:i+1));
-    y(i+1) = yt(end);
-    vt = filtfilt(b1,a1,uwb_v(1:i+1));
-    v(i+1) = vt(end);
-    
+    % calculate current ranging measurements & radical velocity, i-th 
     x_initial_guess = gdt(:,i-opt_length+2:i+1);
     x0_bar = xt(:,i-opt_length+1); % start from x_1, used to predict x2_bar
     x2_minus = xt(:,i-opt_length+2); % start from x_2
