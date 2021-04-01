@@ -2,7 +2,7 @@
 clc;clear
 K = 100; %measure times
 x0 = [0;0;0;0;0;0]; % use prediction as initial guess
-xg = [0.5;0.4;0.6;0;0;0]; % end point
+xg = [0.5;1;1.2;0;0;0]; % end point
 rg = 0.01; % position tolerance
 ru = 2; % input constraint
 source = [0;0;0]; % the position of uwb
@@ -15,7 +15,7 @@ x_initial_guess = [ones(3,K) ones(3,K) zeros(3,K)];
 %% OG-based Trajectory Planning Problem
 clc;
 options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
-[X,fval] = fmincon(@(x)OG_obj(x,dt,K),x_initial_guess,[],[],[],[],[],[],@(x)nonlinear_constraint(x,x0,xg,rg,ru,K,dt),options)
+[X,fval] = fmincon(@(x)OG_obj(x,dt,K),x_initial_guess,[],[],[],[],[],[],@(x)nonlinear_constraint(x,x0,xg,rg,ru,K,dt),options);
 % x(:,1:K) is u_0 ~ u_(K-1); each variable has three elements.
 % x(:,K+1:2K) is p_1 ~ p_K
 % x(:,1:K) is v_1 ~ v_K 
