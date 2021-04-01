@@ -2,13 +2,13 @@
 clc;clear
 K = 100; %measure times
 x0 = [0;0;0;0;0;0]; % use prediction as initial guess
-xg = [1;1;0;0;0;0]; % end point
+xg = [0.5;0.4;0.6;0;0;0]; % end point
 rg = 0.01; % position tolerance
 ru = 2; % input constraint
-source = [0.5;0;0]; % the position of uwb
+source = [0;0;0]; % the position of uwb
 dt = 0.02;
 t = dt*(0:K);
-x_initial_guess = [zeros(3,K) ones(3,K) zeros(3,K)];
+x_initial_guess = [ones(3,K) ones(3,K) zeros(3,K)];
 % x_initial_guess = rand(3,3*K);
 % x_initial_guess = ones(3,3*K);
 

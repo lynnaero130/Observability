@@ -18,16 +18,16 @@ end
 
 second_c = zeros(3,K);
 for j = 1:K
- second_c(:,i) =  2*delta_p(:,i).*t(i);  
+ second_c(:,j) =  2*delta_p(:,j).*t(j);  
 end
 
 C = [2*delta_p' second_c' 2*t t.^2];
 % obj = -abs(det(C'*C));
-eee = eigs(C'*C);
+eee = eigs(C'*C,8);
 obj = max(eee)/(min(eee)+0.01);
 
 temp = x(1,1:K).^2+x(2,1:K).^2 + x(3,1:K).^2;
 energy = sum(temp,2); % sum by columns
 
-f = obj+ 200*energy;
+f = obj+ 10*energy;
 

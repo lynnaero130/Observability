@@ -1,7 +1,7 @@
 function f = MHE_obj(x, x0_bar, x2_minus, z, u, uwb_v, source,dt)
 % The cost function of MHE
-gamma_1 = 100;
-gamma_2 = 0;
+gamma_1 = 1;
+gamma_2 = 0.5;
 gamma_3 = 100;
 gamma_4 = 0;
 obj = 0;
