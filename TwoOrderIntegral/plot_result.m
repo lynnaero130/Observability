@@ -3,7 +3,7 @@ function error_norm = plot_result(t,estimate,groundtruth,graph_title)
 % groundtruth: observed by vicon
 
 subplot(3,1,1)
-plot3(estimate(1,:),estimate(2,:),estimate(3,:),'b--',groundtruth(1,:),groundtruth(2,:),groundtruth(3,:),'b-')
+plot3(estimate(1,:),estimate(2,:),estimate(3,:),'b--',groundtruth(1,:),groundtruth(2,:),groundtruth(3,:),'b-','linewidth',1)
 legend('x_{hat}','x_g')
 ylabel('Trajectory')
 title(graph_title)

@@ -28,6 +28,8 @@ px = p_OG(1,:);
 py = p_OG(2,:);
 pz = p_OG(3,:);
 plot3(px,py,pz,'s-')
+% set(gca,'XLim',[-2.5 1]);
+% set(gca,'YLim',[-0.6 2.5]);
 hold on
 plot3(xg(1),xg(2),xg(3),'om',x0(1),x0(2),x0(3),'dg',source(1),source(2),source(3),'*r')
 xlabel('x')
@@ -64,9 +66,9 @@ zlabel('z')
 grid on
 %% MHE
 clc;close all
-[x_hat_OG,gdt_OG,uwb_v_OG,z_measured_OG,filter_z_OG] = estimate(p_OG,v_OG,u_OG,sigma_omega,sigma_v,source,K,dt);
-[x_hat_line,gdt_line,uwb_v_line,z_measured_line,filter_z_line] = estimate(p_line,v_line,u_line,sigma_omega,sigma_v,source,K,dt);
-[x_hat_screw,gdt_screw,uwb_v_screw,z_measured_screw,filter_z_screw] = estimate(p_screw,v_screw,u_screw,sigma_omega,sigma_v,source,K,dt);
+[x_hat_OG,gdt_OG,uwb_v_OG,z_measured_OG,filter_z_OG] = estimate(p_OG,v_OG,u_OG,sigma_omega,sigma_v,source,K);
+[x_hat_line,gdt_line,uwb_v_OG,z_measured_OG,filter_z_OG] = estimate(p_line,v_line,u_line,sigma_omega,sigma_v,source,K);
+[x_hat_screw,gdt_screw,uwb_v_screw,z_measured_screw,filter_z_screw] = estimate(p_screw,v_screw,u_screw,sigma_omega,sigma_v,source,K);
 %plotres
 figure(2)
 e_OG = plot_result(t,x_hat_OG,gdt_OG,'OG\_based');
@@ -77,12 +79,12 @@ figure(4)
 subplot(2,1,1)
 x_relative = gdt_OG(1:3,:) - source;
 gdt_d = sqrt(x_relative(1,:).^2+x_relative(2,:).^2+x_relative(3,:).^2);
-plot(t,z_measured_OG,t,filter_z_OG,t,gdt_d)
+plot(t,z_measured,t,filter_d,t,gdt_d)
 legend('measure','filter','groundtruth')
 ylabel('distance')
 figure(4)
 subplot(2,1,2)
 gdt_v = sqrt(gdt_OG(4,:).^2+gdt_OG(5,:).^2+gdt_OG(6,:).^2);
-plot(t,uwb_v_OG,t,gdt_v)
+plot(t,uwb_v,t,gdt_v)
 legend('measure','groundtruth')
 ylabel('velocity')

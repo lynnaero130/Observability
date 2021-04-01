@@ -33,6 +33,6 @@ ceq(:,1) = A*x0 + B*u(:,1) - X(:,1); % 6 x 1
 for i = 2:K
    ceq(:,i) = A*X(:,i-1) + B*u(:,i) - X(:,i);
 end
-ceq = reshape(ceq,6*K,1);
+% ceq = reshape(ceq,6*K,1);
 end
 
