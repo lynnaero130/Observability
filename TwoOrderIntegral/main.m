@@ -35,8 +35,8 @@ zlabel('z')
 grid on
 %% MHE
 clc;close all
-sigma_omega =diag([0.001,0.001,0.001]); %diag([0,0,0]); % imu noise
-sigma_v = 0.001;%0; % observation noise
+sigma_omega =diag([0.001,0.001,0.001])*100; %diag([0,0,0]); % imu noise
+sigma_v = 0.01;%0; % observation noise
 
 groundtruth  = [x0 [X(:,K+1:2*K);X(:,2*K+1:3*K)]];
 

@@ -12,7 +12,6 @@ delta = 2;
 init_i = opt_length+delta; % 11
 xt(:,1:init_i) = gdt(:,1:init_i); % xt is used to store the estimation
 %% filter
-[b1,a1] = butter(2,1*dt,'low');  % butterworth filter, cutoff frequency: 0.01*dt/dt = 0.01Hz
 [b2,a2] = butter(4,10*dt,'low'); % butterworth filter, cutoff frequency: 5*dt/dt = 5Hz
 % filter ranging measurements
 y = z;
@@ -20,7 +19,7 @@ v = uwb_v;
 
 for i = init_i:K
     % calculate current ranging measurements & radical velocity, i-th 
-    x_initial_guess = gdt(:,i-opt_length+2:i+1);
+    x_initial_guess = xt(:,i-opt_length+1:i);
     x0_bar = xt(:,i-opt_length+1); % start from x_1, used to predict x2_bar
     x2_minus = xt(:,i-opt_length+2); % start from x_2
     z_mhe = y(:,i-opt_length+2:i+1); % start from z_2
