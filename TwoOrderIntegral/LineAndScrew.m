@@ -10,6 +10,7 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 grid on
+
 %% screw
 p_screw = [x0(1)+(xg(1)-x0(1))*sin(pi*t/(2*K*dt));
            xg(2)+(x0(2)-xg(2))*cos(pi*t/(2*K*dt));

@@ -29,5 +29,5 @@ obj = max(eee)/(min(eee)+0.01);
 temp = x(1,1:K).^2+x(2,1:K).^2 + x(3,1:K).^2;
 energy = sum(temp,2); % sum by columns
 
-f = obj+ 10*energy;
+f = obj+ 0*energy;
 
