@@ -28,7 +28,6 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 grid on
-csvwrite('./data/screw.csv',p_screw')
 %% run mhe line
 X_line = [u_line(:,1:K) p_line(:,2:K+1) v_line(:,2:K+1)];
 gdt_line  = [p_line;v_line];
