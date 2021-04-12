@@ -40,48 +40,46 @@ class unpacker:
 			self.data[topic].append(msg,t)
 
 	def sorttime(self,t):
-		t=np.asarray(t)
+		t = np.asarray(t)
+		self.mintime = min(t)
+		print self.mintime
 		return t-self.mintime
 
-	# imu
-	def fetch_imu(self,id=""):
-		curve = self.data[id+"/mavros/imu/odom"]
-		# t = self.sorttime(curve.time)
-		t = curve.time
-		x = [d.orientation.x for d in curve.data]
-		y = [d.orientation.y for d in curve.data]
-		z = [d.orientation.z for d in curve.data]
-		w = [d.orientation.w for d in curve.data]
-		self.imu = np.vstack((t,x,y,z,w))
-		return self.imu
-
 	# vicon-pos
-	def fetch_v_pos(self,id=""):
+	def fetch_pos(self,id=""):
 		curve = self.data[id+"/mocap/pose"]
-		# t = self.sorttime(curve.time)
+		t = self.sorttime(curve.time)
 		t = curve.time
-		x = [d.pose.pose.position.z for d in curve.data]
-		y = [d.pose.pose.position.z for d in curve.data]
-		z = [d.pose.pose.position.z for d in curve.data]
-		self.pos = np.vstack((t,z))
+		x = [d.pose.orientation.x for d in curve.data]
+		y = [d.pose.orientation.y for d in curve.data]
+		z = [d.pose.orientation.z for d in curve.data]
+		self.pos = np.vstack((t,x,y,z))
 		return self.pos
 	# vicon-vel
-	def fetch_v_vel(self,id=""):
+	def fetch_vel(self,id=""):
 		curve = self.data[id+"/mocap/vel"]
-		# t = self.sorttime(curve.time)
+		t = self.sorttime(curve.time)
 		t = curve.time
-		z = [d.pose.pose.position.z for d in curve.data]
-		self.pos = np.vstack((t,z))
+		x = [d.twist.linear.x for d in curve.data]
+		y = [d.twist.linear.y for d in curve.data]
+		z = [d.twist.linear.z for d in curve.data]
+		self.pos = np.vstack((t,x,y,z))
 		return self.pos
-	# uwb   ???
+	# uwb
 	def fetch_uwb(self,id=""):
-		curve = self.data[id+"/mavros/local_position/odom"]
+		curve = self.data[id+"/nlink_linktrack_nodeframe3"]
 		# t = self.sorttime(curve.time)
 		t = curve.time
-		z = [d.pose.pose.position.z for d in curve.data]
-		self.pos = np.vstack((t,z))
-		return self.pos
-
-# bag=unpacker("/home/lynn/catkin_ws/src/gazebo_ros_learning/offb_posctl/bagfile/case1/AOCB.bag")
-# bag.unpack()
-# bag.fetch_z()
+		# print (curve.data[0].nodes[0].dis)
+		z = [d.nodes[0].dis if len(d.nodes)>0 else 100 for d in curve.data ]  # if the distance is not obtained, let it be 100.
+		self.dis = np.vstack((t,z))
+		return self.dis
+	# counter
+	def fetch_counter(self,id=""):
+		curve = self.data[id+"/counter"]
+		# t = self.sorttime(curve.time)
+		t = curve.time
+		# print (curve.data[0].nodes[0].dis)
+		z = [d.data for d in curve.data]
+		self.counter = np.vstack((t,z))
+		return self.counter
