@@ -38,4 +38,4 @@ mat["pos"] = pos
 mat["vel"] = vel
 mat["dis"] = dis
 mat["counter"] = counter
-sciio.savemat("./data/"+name,mat)
+sciio.savemat("../zzw/data/0411/"+name,mat)
