@@ -23,7 +23,7 @@ tf = 10
 confrequency = 25
 time_range = tf*confrequency
 
-name = 'OG_2'
+name = 'screw_2'
 bag_path = "./data/"+name+".bag"
 A_bag = unpacker(path=bag_path)
 # unpack the bag

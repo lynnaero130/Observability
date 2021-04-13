@@ -50,9 +50,9 @@ class unpacker:
 		curve = self.data[id+"/mocap/pose"]
 		t = self.sorttime(curve.time)
 		t = curve.time
-		x = [d.pose.orientation.x for d in curve.data]
-		y = [d.pose.orientation.y for d in curve.data]
-		z = [d.pose.orientation.z for d in curve.data]
+		x = [d.pose.position.x for d in curve.data]
+		y = [d.pose.position.y for d in curve.data]
+		z = [d.pose.position.z for d in curve.data]
 		self.pos = np.vstack((t,x,y,z))
 		return self.pos
 	# vicon-vel
