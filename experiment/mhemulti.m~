@@ -35,7 +35,7 @@ for a=1:K
 end
 imu_o = imu;
 
-%% filter & plot
+%% load data
 lopt = 8;  % set moving horizon
 
 % ranging measurements of ground robots
@@ -96,7 +96,7 @@ plot(time,imu(1,:),'r',time,imu(2,:),'b',time,imu(3,:),'k',time,imu_o(1,:),'r--'
 legend('ax','ay','az','ax_o','ay_o','az_o')
 title('filtered imu VS imu')
 
-%% MHE
+%% initialize
 delta = 10;
 xt = gtd(:, 1:lopt+delta); % record estimation by MHE, initial
 xt_imu = gtd(:, 1:lopt+delta); 
@@ -159,7 +159,7 @@ end
     xt(5,:) = filtfilt(b2,a2,xt(5,:));
     xt(6,:) = filtfilt(b2,a2,xt(6,:));
 
-%% plot estimated result
+%% plot
 figure(4)
 set(gcf,'Position',[347,162,800,800]);
 error_norm = plot_result(time,xt,gtd,'screw');
