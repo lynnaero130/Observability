@@ -56,6 +56,7 @@ end
 x_estimate = MHE(groundtruth,u_measured,uwb_v, filter_d,dt,K,source);
 %plotres
 figure(2)
+set(gcf,'Position',[347,162,800,800]);
 e_OG = plot_result(t,x_estimate,groundtruth,'OG\_based');
 
 % figure(3)

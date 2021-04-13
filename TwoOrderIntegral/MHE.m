@@ -27,7 +27,8 @@ for i = init_i:K
     u_mhe = u(:,i-opt_length+1:i); % start from u_1
 
     % use u_1 ~ u_10 & z_1 ~ z_10 to estimate x2 ~ x11
-    X = fmincon(@(x)MHE_obj(x, x0_bar, x2_minus, z_mhe,u_mhe,v_mhe,source,dt),x_initial_guess,[],[],[],[],[],[],[],options);
+%     X = fmincon(@(x)MHE_obj(x, x0_bar, x2_minus, z_mhe,u_mhe,v_mhe,source,dt),x_initial_guess,[],[],[],[],[],[],[]options);
+    X = fmincon(@(x)MHE_obj(x, x0_bar, x2_minus, z_mhe,u_mhe,v_mhe,source,dt),x_initial_guess,[],[],[],[],[],[],@(x)nonlcon(x,v_mhe),options);
     % X(1:3,:) is position; X(4:6,:) is velocity.
     xt(:,i+1) = X(1:6,end);
     fprintf('Iteration = %d\n', i)

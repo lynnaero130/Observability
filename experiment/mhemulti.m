@@ -1,6 +1,6 @@
 %% 1. process
 clc;clear
-name = 'screw';
+name = 'line';
 data = load(['./data/0411/' name '_2.mat']);
 i = find(data.counter(2,:)==0);
 begin_time = data.counter(1,i(2));
@@ -21,26 +21,28 @@ gtd_100(1,:) = gtd_100(1,:)+3.3068; % remove the bias of VICON
 gtd_100(2,:) = gtd_100(2,:) -1.4229;
 gtd_100(3,:) = gtd_100(3,:) -0.5397;
 
-%uwb
-k = find((data.dis(1,:)>=begin_time)&(data.dis(1,:)<=end_time));
-uwb_whole = data.dis(2,k); 
-k_1 = find(uwb_whole==100); % wipe out invalid value: 100
-uwb_whole(k_1) = uwb_whole(k_1-1);
-uwb = uwb_whole(1:2:2*K-1);
 % imu
 imu = [];
 gtd = [];
 for a=1:K
-%     imu(:,a) = (gtd_100(4:6,a*4)-gtd_100(4:6,a*4-3))/0.03;
-%     imu(:,a) = (gtd_100(4:6,4*(a-1)+2)-gtd_100(4:6,4*(a-1)+1))/0.03;
+    imu(:,a) = (gtd_100(4:6,a*4)-gtd_100(4:6,a*4-3))/0.03; 
+%     imu(:,a) = (gtd_100(4:6,4*(a-1)+2)-gtd_100(4:6,4*(a-1)+1))/0.01;
     gtd(:,a) = gtd_100(:,a*4-3);
 end
-for a=1:K-1
-    imu(:,a) = (gtd_100(4:6,a*4+1)-gtd_100(4:6,a*4-3))/0.04;
-end
-imu(:,K) = (gtd_100(4:6,K*4)-gtd_100(4:6,a*4-3))/0.03;
+% for a=1:K-1
+%     imu(:,a) = (gtd_100(4:6,a*4+1)-gtd_100(4:6,a*4-3))/0.04;
+% end
+% imu(:,K) = (gtd_100(4:6,K*4)-gtd_100(4:6,a*4-3))/0.03;
 imu_o = imu;
 
+%uwb
+k = find((data.dis(1,:)>=begin_time)&(data.dis(1,:)<=end_time));
+uwb_whole = data.dis(2,k); 
+% uwb_whole(k_1) = uwb_whole(k_1-1);
+uwb = uwb_whole(1:2:2*K-1);
+k_1 = find(uwb==100); % wipe out invalid value: 100
+gdt_v = sqrt(gtd(1,:).^2+gtd(2,:).^2+gtd(3,:).^2);
+uwb(k_1) = gdt_v(k_1);
 %% 2. filter & plot
 lopt = 8;  % set moving horizon
 
