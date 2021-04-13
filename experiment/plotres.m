@@ -16,11 +16,11 @@ plot(time(1:length(xt(3,:))),gtd(3,1:length(xt(3,:))),'b--', 'linewidth', 2)
 
 % plot(time(1:length(xt(1,:))),uwb(1:length(xt(1,:))),'k--', 'linewidth', 2)
 grid on
-xlim([0,45])
-ylim([-5, 8])
-legend('\alpha','Interpreter','latex')
-% legend('\hat{x}','\hat{y}','\hat{z}','$\hat{x}_g$','\hat{y}_g','\hat{z}_g','FontSize',18,'NumColumns',3)
-% legend('$\hat{x}$','$\hat{y}$','$\hat{z}$','$\hat{x}_g$','$\hat{y}_g$','$\hat{z}_g$','$\hat{x}_a$','$\hat{y}_a$','$\hat{z}_a$','Interpreter','latex','FontSize',18,'NumColumns',3) 
+% xlim([0,45])
+% ylim([-5, 8])
+% legend('\alpha','Interpreter','latex')
+legend({'x\_hat','y\_hat','z\_hat','x_g','y_g','z_g'},'FontSize',18,'NumColumns',2)
+% legend('{$\hat{x}$','$\hat{y}$','$\hat{z}$','$\hat{x}_g$','$\hat{y}_g$','$\hat{z}_g$','$\hat{x}_a$','$\hat{y}_a$','$\hat{z}_a$'},'Interpreter','latex','FontSize',18,'NumColumns',3) 
 xlabel('Time (s)')
 ylabel('Position (m)')
 

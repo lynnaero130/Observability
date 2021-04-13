@@ -54,6 +54,7 @@ class unpacker:
 		y = [d.pose.position.y for d in curve.data]
 		z = [d.pose.position.z for d in curve.data]
 		self.pos = np.vstack((t,x,y,z))
+		print(x)
 		return self.pos
 	# vicon-vel
 	def fetch_vel(self,id=""):

@@ -23,7 +23,7 @@ tf = 10
 confrequency = 25
 time_range = tf*confrequency
 
-name = 'OG_1'
+name = 'line_1'
 bag_path = "./data/"+name+".bag"
 A_bag = unpacker(path=bag_path)
 # unpack the bag
@@ -38,4 +38,4 @@ mat["pos"] = pos
 mat["vel"] = vel
 mat["dis"] = dis
 mat["counter"] = counter
-sciio.savemat("../experiment/data/0411/"+name,mat)
+# sciio.savemat("../experiment/data/0411/"+name,mat)

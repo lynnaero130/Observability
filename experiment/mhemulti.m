@@ -1,11 +1,12 @@
 %% process
 clc;clear
-data = load('data/0411/OG_1.mat');
+data = load('./data/0411/OG_1.mat');
 i = find(data.counter(2,:)==0);
 begin_time = data.counter(1,i(2));
 end_time = data.counter(1,i(2)+125);
 dt = 1/25;% sampling frequency: 25Hz
 K = 5/dt; %measure times
+time = dt*(0:K-1);
 
 % pos&vel
 i = find((data.pos(1,:)>=begin_time)&(data.pos(1,:)<=end_time));
@@ -18,8 +19,10 @@ gtd_100(3,:) = gtd_100(3,:)-0.04;
 
 %uwb
 k = find((data.dis(1,:)>=begin_time)&(data.dis(1,:)<=end_time));
-uwb = data.dis(2,k); 
-
+uwb_whole = data.dis(2,k); 
+k_1 = find(uwb_whole==100); % wipe out invalid value: 100
+uwb_whole(k_1) = uwb_whole(k_1-1);
+uwb = uwb_whole(1:2:2*K-1)+0.4;
 % imu
 imu = [];
 gtd = [];
@@ -27,9 +30,13 @@ for a=1:K
     imu(:,a) = (gtd_100(4:6,a*4)-gtd_100(4:6,a*4-3))/0.03;
     gtd(:,a) = gtd_100(:,a*4-3);
 end
+figure(1)
+plot(time,uwb,time,sqrt(gtd(1,:).^2+gtd(2,:).^2+gtd(3,:).^2)) % error:0.5m
+legend('uwb\_dis','gtd\_dis')
+figure(2)
+plot(time,imu)
 %% load data
 lopt = 8;  % set moving horizon
-time = dt*(0:K);
 
 % ranging measurements of ground robots
 uwb1 = uwb;
@@ -63,7 +70,12 @@ imu(2,:) = imu(2,:) - 0.07;
     vy1 = filtfilt(b1,a1,vy1);
     vy2 = filtfilt(b1,a1,vy2);
 
-%p = parpool('local',6);
+% % filter imu
+% imu(1,:) = filtfilt(b1,a1,imu(1,:));
+% imu(2,:) = filtfilt(b1,a1,imu(2,:));
+% imu(3,:) = filtfilt(b1,a1,imu(3,:));
+% figure(3)
+% plot(time,imu)
 %------------- preprocessing-----------------%
 %% initialize
 delta = 10;
@@ -105,7 +117,7 @@ for i = lopt+delta+1:K  % i: current time-step
     x0 = prediction(xi, MHE_imu, dt); % use prediction as initial guess
 %     x0 = [xt(i-lopt+1,i) ];
 %     x_t = prediction(xt_imu(:,i-lopt), MHE_imu, dt); %??
-%     xt_imu(:,i) = x_t(:,end); %ï¼?
+%     xt_imu(:,i) = x_t(:,end); %ï¿½?
     options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
     X = fmincon(@(x)objmhemulti (x, xi, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],[],options);
     xt(:,i) = X(:,end);
