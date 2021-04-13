@@ -4,9 +4,9 @@ obj = 0;
 % gamma_2 = 10;
 % gamma_3 = 100;
 % gamma_4 = 3;
-gamma_1 = 1;
-gamma_2 = 2;
-gamma_3 = 100;
+gamma_1 = 10;
+gamma_2 = 0;
+gamma_3 = 50;
 gamma_4 = 0;
 
 dt = 0.04;

@@ -1,7 +1,7 @@
 % This script is used to calculate the offset of ground truth
 x0 = [0;0;0];
 options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
-X = fmincon(@(x)obj (x,y,gtd),x0,[],[],[],[],[],[],[],options);
+X = fmincon(@(x)obj (x,uwb,gtd),x0,[],[],[],[],[],[],[],options)
 
 function f = obj(x,uwb,gtd)
 a = x(1);

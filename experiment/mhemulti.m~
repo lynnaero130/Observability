@@ -1,7 +1,7 @@
-%% 1. process
+%% process
 clc;clear
-name = 'screw';
-data = load(['./data/0411/' name '_2.mat']);
+name = 'OG';
+data = load(['./data/0411/' name '_1.mat']);
 i = find(data.counter(2,:)==0);
 begin_time = data.counter(1,i(2));
 end_time = data.counter(1,i(2)+125);
@@ -31,17 +31,13 @@ uwb = uwb_whole(1:2:2*K-1);
 imu = [];
 gtd = [];
 for a=1:K
-%     imu(:,a) = (gtd_100(4:6,a*4)-gtd_100(4:6,a*4-3))/0.03;
+    imu(:,a) = (gtd_100(4:6,a*4)-gtd_100(4:6,a*4-3))/0.03;
 %     imu(:,a) = (gtd_100(4:6,4*(a-1)+2)-gtd_100(4:6,4*(a-1)+1))/0.03;
     gtd(:,a) = gtd_100(:,a*4-3);
 end
-for a=1:K-1
-    imu(:,a) = (gtd_100(4:6,a*4+1)-gtd_100(4:6,a*4-3))/0.04;
-end
-imu(:,K) = (gtd_100(4:6,K*4)-gtd_100(4:6,a*4-3))/0.03;
 imu_o = imu;
 
-%% 2. filter & plot
+%% filter & plot
 lopt = 8;  % set moving horizon
 
 % ranging measurements of ground robots
@@ -78,10 +74,10 @@ uwb2 = uwb;
 %     vy1 = vy;
 %     vy2 = vy;
 %filter imu
-% imu(1,:) = filtfilt(b3,a3,imu_o(1,:));
-% imu(2,:) = filtfilt(b3,a3,imu_o(2,:));
-% imu(3,:) = filtfilt(b3,a3,imu_o(3,:));   
-imu = imu_o;
+imu(1,:) = filtfilt(b3,a3,imu_o(1,:));
+imu(2,:) = filtfilt(b3,a3,imu_o(2,:));
+imu(3,:) = filtfilt(b3,a3,imu_o(3,:));   
+
 %plot
 % compare distance
 figure(1)
@@ -105,27 +101,7 @@ subplot(3,1,3)
 plot(time,imu(3,:),'r',time,imu_o(3,:),'r--')
 legend('az','az_o')
 
-%% 3. verify acceleration
-delta_v(:,1) = imu(:,1)*dt;
-for i = 2:K
-    delta_v(:,i) = delta_v(:,i-1) + imu(:,i)*dt;
-end
-delta_p(:,1) = 0.5*dt^2*imu(:,1); % the position variance rised from acc.
-for i = 2:K
-    delta_p(:,i) = delta_p(:,i-1) + delta_v(:,i-1)*dt + 0.5*dt^2*imu(:,i);%+0.05*rand(3,1);
-end
-figure(6)
-subplot(3,1,1)
-plot(time,delta_p(1,:)+gtd(1,1),'r',time,gtd(1,:),'r--')
-legend('acc_x','gtd_x')
-subplot(3,1,2)
-plot(time,delta_p(2,:)+gtd(2,1),'r-',time,gtd(2,:),'r--')
-legend('acc_y','gtd_y')
-subplot(3,1,3)
-plot(time,delta_p(3,:)+gtd(3,1),'r-',time,gtd(3,:),'r--')
-legend('acc_z','gtd_z')
-
-%% 4. MHE
+%% MHE
 delta = 10;
 xt = gtd(:, 1:lopt+delta); % record estimation by MHE, initial
 xt_imu = gtd(:, 1:lopt+delta); 
@@ -189,7 +165,7 @@ end
     xt(5,:) = filtfilt(b2,a2,xt(5,:));
     xt(6,:) = filtfilt(b2,a2,xt(6,:));
 
-%% 5. plot estimated result
+%% plot estimated result
 close all
 figure(4)
 set(gcf,'Position',[347,162,800,800]);
@@ -199,3 +175,14 @@ plot(time,vy,time,sqrt(xt(4,:).^2+xt(5,:).^2+xt(6,:).^2),'--',time,sqrt(gtd(4,:)
 legend('uwb_v','estimate_v','gtd_v')
 title('radical velocity VS |velocity|')
 
+%% verify acceleration
+delta_v(:,1) = imu(:,1)*dt;
+for i = 2:K
+    delta_v(:,i) = delta_v(:,i-1) + imu(:,i)*dt;
+end
+
+delta_p(:,1) = 0.5*dt^2*imu(:,1); % the position variance rised from acc.
+for i = 2:K
+    delta_p(:,i) = delta_p(:,i-1) + delta_v(:,i-1)*dt + 0.5*dt^2*imu(:,i);%+0.05*rand(3,1);
+end
+plot(time,delta_p(1,:))
