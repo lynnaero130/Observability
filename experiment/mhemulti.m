@@ -1,6 +1,7 @@
 %% process
 clc;clear
-data = load('./data/0411/OG_1.mat');
+name = 'OG';
+data = load(['./data/0411/' name '_1.mat']);
 i = find(data.counter(2,:)==0);
 begin_time = data.counter(1,i(2));
 end_time = data.counter(1,i(2)+125);
@@ -43,8 +44,8 @@ uwb1 = uwb;
 uwb2 = uwb;
 
 % acceleration
-imu(3,:) = imu(3,:)- mean(imu(3,:))+0.02;
-imu(2,:) = imu(2,:) - 0.07;
+% imu(3,:) = imu(3,:)- mean(imu(3,:))+0.02;
+% imu(2,:) = imu(2,:) - 0.07;
 
 %------------- preprocessing-----------------%
 [b1,a1] = butter(2,0.04,'low');  % butterworth filter, cutoff frequency: 0.04*25 = 1Hz
@@ -138,7 +139,8 @@ for i = lopt+delta+1:K  % i: current time-step
 %     x_t = prediction(xt_imu(:,i-lopt), MHE_imu, dt); %??
 %     xt_imu(:,i) = x_t(:,end); 
     options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
-    X = fmincon(@(x)objmhemulti (x, xi, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],[],options);
+%     X = fmincon(@(x)objmhemulti (x, xi, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],[],options);
+    X = fmincon(@(x)objmhemulti (x, xi, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],@(x)nonlcon(x,MHE_v),options);
     xt(:,i) = X(:,end);
     
     % post processing
@@ -160,6 +162,11 @@ end
     xt(6,:) = filtfilt(b2,a2,xt(6,:));
 
 %% plot estimated result
+close all
 figure(4)
 set(gcf,'Position',[347,162,800,800]);
-error_norm = plot_result(time,xt,gtd,'screw');
+error_norm = plot_result(time,xt,gtd,name);
+figure(5)
+plot(time,vy,time,sqrt(xt(4,:).^2+xt(5,:).^2+xt(6,:).^2),'--',time,sqrt(gtd(4,:).^2+gtd(5,:).^2+gtd(6,:).^2),'-.')  
+legend('uwb_v','estimate_v','gtd_v')
+title('radical velocity VS |velocity|')
