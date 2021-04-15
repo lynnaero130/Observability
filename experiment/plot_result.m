@@ -1,7 +1,7 @@
 function error_norm = plot_result(t,estimate,groundtruth,graph_title)
 % estimate: estimated result by MHE
 % groundtruth: observed by vicon
-
+set(gcf,'Position',[347,162,800,800]);
 subplot(4,1,1)
 plot3(estimate(1,:),estimate(2,:),estimate(3,:),'b--',groundtruth(1,:),groundtruth(2,:),groundtruth(3,:),'b-','linewidth', 2)
 legend('x_{hat}','x_g')
