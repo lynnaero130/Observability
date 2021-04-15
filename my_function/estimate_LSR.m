@@ -1,4 +1,5 @@
 function x= estimate_LSR(imu,uwb,dt)
+% This function use LSR to estimate the initial p0,v0
 K = size(imu,2);
 t = dt*(1:K)';
 delta_v(:,1) = imu(:,1)*dt;

@@ -1,4 +1,4 @@
-
+function [ ] = plot_before_mhe(time,gtd,imu,imu_o,y,vy,dt,K)
 figure(1)
 plot(time,y,time,sqrt(gtd(1,:).^2+gtd(2,:).^2+gtd(3,:).^2))  
 legend('uwb\_dis','gtd\_dis')
@@ -46,4 +46,4 @@ legend('acc_y','gtd_y')
 subplot(3,1,3)
 plot(time,delta_p(3,:)+gtd(3,1),'r-',time,gtd(3,:),'r--')
 legend('acc_z','gtd_z')
-
+end
