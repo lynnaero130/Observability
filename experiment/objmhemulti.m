@@ -4,10 +4,10 @@ obj = 0;
 % gamma_2 = 10;
 % gamma_3 = 100;
 % gamma_4 = 3;
-gamma_1 = 10;
-gamma_2 = 100;
-gamma_3 = 50;
-gamma_4 = 0;
+gamma_1 = 1; % imu
+gamma_2 = 10; % dis
+gamma_3 = 10;
+gamma_4 = 10; % vel
 
 dt = 0.04;
 
@@ -62,11 +62,14 @@ for i = 1:length(u)
 %     uwb_max_v = max([uwb_v0(i),uwb_v1(i),uwb_v2(i)]);
 %    uwb_max_v = max([uwb_v0(i),uwb_v1(i)]);
     uwb_max_v = uwb_v0(i);
-    estimate_v = sqrt(x(4:6,i)'*x(4:6,i));
-    v_dis(i) = ((uwb_max_v-estimate_v)^2)*exp((uwb_max_v+0.1)/(estimate_v+0.1));  
+%     estimate_v = sqrt(x(4:6,i)'*x(4:6,i));
+%     v_dis(i) = ((uwb_max_v-estimate_v)^2)*exp((uwb_max_v+0.1)/(estimate_v+0.1));  
+%      [~,~,estimate_v] = cart2sph(x(4,i),x(5,i),x(6,i));
+    estimate_v = x(1:3,i)'*x(4:6,i)/estimate_d;
+    v_dis(i) = (uwb_max_v-estimate_v)^2;
+    
     t_obj = gamma_4*v_dis(i);
     obj = obj + t_obj; % 1st term + 2nd term + fourth term
-
 end
 
 obj = obj + gamma_3* (x(:,1)-x0(:,1))'*(x(:,1)-x0(:,1)); % 1st term + 2nd term + fourth term + third term
