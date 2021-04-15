@@ -1,4 +1,4 @@
-%% 1. Initialize
+%% 1. load & Initialize
 clc;clear
 name = 'OG';
 data = load(['./data/0411/' name '_1.mat']);
@@ -169,16 +169,21 @@ end
 % end
 % xt(4:6,:) = xt(4:6,:) + new_v;
 %% 4.2 LSR to estimate x
-
-
-
-
+clc;
+x_LSR = [];
+num = 15;
+for i = 1:K-num
+    temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+    temp(1:3)'*temp(4:6) - temp(7)
+    x_LSR(:,i) = temp(1:6);
+end
+xt = x_LSR;
 
 
 %% 5. plot estimated result
 close all
 figure(4)
-error_norm = plot_result(time,xt,gtd,name);
+error_norm = plot_result(time(1:length(xt)),xt,gtd(:,1:length(xt)),name);
 figure(5)
 plot(time,vy,time,sqrt(xt(4,:).^2+xt(5,:).^2+xt(6,:).^2),'--',time,sqrt(gtd(4,:).^2+gtd(5,:).^2+gtd(6,:).^2),'-.')  
 legend('uwb_v','estimate_v','gtd_v')
