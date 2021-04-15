@@ -1,11 +1,6 @@
 function x= estimate_LSR(imu,uwb,dt)
-% This is the cost of tajectory generation.
-% K denote the measure times
-% x(:,1:K) is u_0 ~ u_(K-1); each variable has three elements.
-% x(:,K+1:2K) is p_1 ~ p_K
-% x(:,2k+1:3K) is v_1 ~ v_K
-
-t = dt*(1:size(imu,2))';
+K = size(imu,2);
+t = dt*(1:K)';
 delta_v(:,1) = imu(:,1)*dt;
 for i = 2:K
     delta_v(:,i) = delta_v(:,i-1) + imu(:,i)*dt;
@@ -22,7 +17,8 @@ for j = 1:K
 end
 r0 = uwb(:,1);
 C = [2*delta_p' second_c' 2*t t.^2];
-b = (uwb.^2 - r0^2-delta_p.^2);
+temp = delta_p(1,:).^2+delta_p(2,:).^2+delta_p(3,:).^2;
+b = (uwb(:,2:end).^2 - r0^2-temp)';
 
 x = inv(C'*C)*C'*b;
 

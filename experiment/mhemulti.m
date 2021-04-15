@@ -91,7 +91,7 @@ end
     vy2 = filtfilt(b1,a1,vy2);
 %% 3. plot before mhe
 plot_before_mhe % run the script
-%% 4. MHE
+%% 4.1 MHE
 delta = 10;
 xt = gtd(:, 1:lopt+delta); % record estimation by MHE, initial
 xt_imu = gtd(:, 1:lopt+delta); 
@@ -155,7 +155,7 @@ end
     xt(5,:) = filtfilt(b2,a2,xt(5,:));
     xt(6,:) = filtfilt(b2,a2,xt(6,:));
 
-%% 4.1 velocity compensation
+%% 4.2 velocity compensation
 % temp = (y - sqrt(xt(1,:).^2+xt(2,:).^2+xt(3,:).^2));
 % for i = 1:K-5
 %     part_a(i) = temp(i+5) - temp(i)
@@ -168,17 +168,15 @@ end
 %    new_v(:,i) =sum(delta_v(:,1:i),2);
 % end
 % xt(4:6,:) = xt(4:6,:) + new_v;
-%% 4.2 LSR to estimate x
+%% 4.3 LSR to estimate x
 clc;
 x_LSR = [];
 num = 15;
 for i = 1:K-num
-    temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-    temp(1:3)'*temp(4:6) - temp(7)
+    temp = estimate_LSR(imu(:,i:i+num-1),y(:,i:i+num),dt);
     x_LSR(:,i) = temp(1:6);
 end
 xt = x_LSR;
-
 
 %% 5. plot estimated result
 close all

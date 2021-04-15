@@ -1,7 +1,6 @@
 %% 1. Initialize
 clc;clear
-% x0 = [-0.5;-0.5;0.5;0;0;0]; % use prediction as initial guess
-x0 = [0;0;0;0;0;0]; % use prediction as initial guess
+x0 = [-0.5;-0.5;0.5;0;0;0]; % use prediction as initial guess
 xg = [0.5;1;0.7;0;0;0]; % end point
 rg = 0.01; % position tolerance
 ru = 2; % input constraint
@@ -70,7 +69,7 @@ for i = 1:K-num
 end
 xt = x_LSR;
 figure(3)
-[~] = plot_result(t(:,1:size(xt,2)),xt,gtd(:,1:size(xt,2)),'OG\_based');
+[~] = plot_result(t(:,size(xt,2)),xt,gtd(:,size(xt,2)),'OG\_based');
 %% 4. plot
 figure(4)
 subplot(2,1,1)
