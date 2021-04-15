@@ -1,9 +1,9 @@
 function f = MHE_obj(x, x0_bar, x2_minus, z, u, uwb_v, source,dt)
 % The cost function of MHE
 gamma_1 = 1;
-gamma_2 = 0.5;
+gamma_2 = 5;
 gamma_3 = 100;
-gamma_4 = 0;
+gamma_4 = 0.1;
 obj = 0;
 A = [1, 0, 0, dt, 0, 0;
      0, 1, 0, 0, dt, 0;
@@ -31,9 +31,12 @@ for i = 1:length(u)
     estimate_d = sqrt(x_relative' * x_relative);
     z_obj =  gamma_2 * (estimate_d - z(i))^2;
     
-    estimate_v = sqrt(x(4:6,i)'*x(4:6,i));
+%     estimate_v = sqrt(x(4:6,i)'*x(4:6,i));
+    
+    estimate_v = x_relative(1:3)'*x(4:6,i)/estimate_d;
+    v_dis = (uwb_v(i)-estimate_v)^2;
 %     v_dis = ((uwb_v(i)-estimate_v)^2)*exp((uwb_v(i)+0.1)/(estimate_v+0.1));  
-    v_dis = (uwb_v(i)-(uwb_v(i)+0.01)*estimate_v/(estimate_v+0.01))^2;  
+%     v_dis = (uwb_v(i)-(uwb_v(i)+0.01)*estimate_v/(estimate_v+0.01))^2;  
     v_obj = gamma_4*v_dis;
     obj = obj + t_obj + z_obj + v_obj;    % 1st term + 2nd term + fourth term
 %     obj = t_obj + z_obj + v_obj;

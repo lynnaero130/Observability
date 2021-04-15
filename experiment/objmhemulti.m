@@ -1,13 +1,13 @@
-function f = objmhemulti(x, x0, u, uwb_d, uwb_d1, uwb_d2, uwb_v0, uwb_v1, uwb_v2)
+function f = objmhemulti(x, x0, x2minus,ui, u, uwb_d, uwb_d1, uwb_d2, uwb_v0, uwb_v1, uwb_v2)
 obj = 0;
 % gamma_1 = 1.2;
 % gamma_2 = 10;
 % gamma_3 = 100;
 % gamma_4 = 3;
 gamma_1 = 1; % imu
-gamma_2 = 10; % dis
-gamma_3 = 10;
-gamma_4 = 10; % vel
+gamma_2 = 5; % dis
+gamma_3 = 100;
+gamma_4 = 2; % vel
 
 dt = 0.04;
 
@@ -25,7 +25,7 @@ A = [1, 0, 0, dt, 0, 0;
      0,  dt, 0;
      0,  0, dt;];
 
-xt(:,1) = x0;
+xt(:,1) = A* x0+B*ui;
 
 for i = 1:length(u)
     xt(:, i+1) = A  *  x(:, i) + B  *  u(:, i);  % predict
@@ -72,7 +72,7 @@ for i = 1:length(u)
     obj = obj + t_obj; % 1st term + 2nd term + fourth term
 end
 
-obj = obj + gamma_3* (x(:,1)-x0(:,1))'*(x(:,1)-x0(:,1)); % 1st term + 2nd term + fourth term + third term
+obj = obj + gamma_3* (x(:,1)-x2minus(:,1))'*(x(:,1)-x2minus(:,1)); % 1st term + 2nd term + fourth term + third term
 
 f = obj;  % function with regard to x
 

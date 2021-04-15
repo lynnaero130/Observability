@@ -1,7 +1,7 @@
 %% 1. load & Initialize
 clc;clear
-name = 'OG';
-data = load(['./data/0411/' name '_1.mat']);
+name = 'line';
+data = load(['./data/0411/' name '_2.mat']);
 i = find(data.counter(2,:)==0);
 begin_time = data.counter(1,i(2));
 end_time = data.counter(1,i(2)+125);
@@ -32,7 +32,7 @@ end
 
 %-------------------------------------imu--------------------------------------%
 imu = [];
-imu_tag = 0; % 0 denotes three order deviation; 1 denotes four order deviation, accurate
+imu_tag = 1; % 0 denotes three order deviation; 1 denotes four order deviation, accurate
 if imu_tag == 0
     for a=1:K
     imu(:,a) = (gtd_100(4:6,a*4)-gtd_100(4:6,a*4-3))/0.03; 
@@ -53,7 +53,7 @@ imu_o = imu; % store the imu before filter
 %-------------------------------------uwb--------------------------------------%
 k = find((data.dis(1,:)>=begin_time)&(data.dis(1,:)<=end_time));
 uwb_whole = data.dis(2,k); 
-uwb_tag = 0;
+uwb_tag = 1;
 if uwb_tag == 0
      k_1 = find(uwb_whole==100); 
     uwb_whole(k_1) = uwb_whole(k_1-1);
@@ -116,7 +116,9 @@ for i = lopt+delta+1:K  % i: current time-step
 %     vy1 = filtfilt(b1,a1,vy1);
 %     vy2 = filtfilt(b1,a1,vy2);
     
-    xi = xt(:,i-lopt+1); % estimated initial value
+    xi = xt(:,i-lopt); % estimated initial value
+    ui = imu(:,i-lopt);
+    x2minus = xt(:,i-lopt+1); % estimated initial value
     disp(['Step ', num2str(i)])
 
     % used for MHE, 15 points
@@ -133,7 +135,7 @@ for i = lopt+delta+1:K  % i: current time-step
 %     x_t = prediction(xt_imu(:,i-lopt), MHE_imu, dt); %??
 %     xt_imu(:,i) = x_t(:,end); 
     options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
-    X = fmincon(@(x)objmhemulti (x, xi, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],[],options);
+    X = fmincon(@(x)objmhemulti (x, xi, x2minus,ui, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],[],options);
 %     X = fmincon(@(x)objmhemulti (x, xi, MHE_imu, MHE_uwb, MHE_uwb1, MHE_uwb2, MHE_v, MHE_v1, MHE_v2),x0,[],[],[],[],[],[],@(x)nonlcon(x,MHE_v),options);
     xt(:,i) = X(:,end);
     
@@ -169,14 +171,14 @@ end
 % end
 % xt(4:6,:) = xt(4:6,:) + new_v;
 %% 4.3 LSR to estimate x
-clc;
-x_LSR = [];
-num = 15;
-for i = 1:K-num
-    temp = estimate_LSR(imu(:,i:i+num-1),y(:,i:i+num),dt);
-    x_LSR(:,i) = temp(1:6);
-end
-xt = x_LSR;
+% clc;
+% x_LSR = [];
+% num = 15;
+% for i = 1:K-num
+%     temp = estimate_LSR(imu(:,i:i+num-1),y(:,i:i+num),dt);
+%     x_LSR(:,i) = temp(1:6);
+% end
+% xt = x_LSR;
 
 %% 5. plot estimated result
 close all

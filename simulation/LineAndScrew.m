@@ -38,7 +38,7 @@ gdt_line  = [p_line;v_line];
 filter_d_line = filtfilt(b2,a2,z_measured_line);
 uwb_v_line =  [0,0];
 for i = 2:K+1
-    uwb_v_line(i) = abs(filter_d_line(i)-filter_d_line(i-1))/(dt);
+    uwb_v_line(i) = (filter_d_line(i)-filter_d_line(i-1))/(dt);
 end
 
 %MHE
@@ -56,7 +56,7 @@ gdt_screw  = [p_screw;v_screw];
 filter_d_screw = filtfilt(b2,a2,z_measured_screw);
 uwb_v_screw =  [0,0];
 for i = 2:K+1
-    uwb_v_screw(i) = abs(filter_d_screw(i)-filter_d_screw(i-1))/(dt);
+    uwb_v_screw(i) = (filter_d_screw(i)-filter_d_screw(i-1))/(dt);
 end
 
 %MHE

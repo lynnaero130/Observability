@@ -32,17 +32,24 @@ for i = init_i:K
     % X(1:3,:) is position; X(4:6,:) is velocity.
     xt(:,i+1) = X(1:6,end);
     fprintf('Iteration = %d\n', i)
+%     xt(1,:) = filtfilt(b2,a2,xt(1,:));
+%     xt(2,:) = filtfilt(b2,a2,xt(2,:));
+%     xt(3,:) = filtfilt(b2,a2,xt(3,:));
+% 
+%     xt(4,:) = filtfilt(b2,a2,xt(4,:));
+%     xt(5,:) = filtfilt(b2,a2,xt(5,:));
+%     xt(6,:) = filtfilt(b2,a2,xt(6,:));
     
 end
 
     % post processing
-    xt(1,:) = filtfilt(b2,a2,xt(1,:));
-    xt(2,:) = filtfilt(b2,a2,xt(2,:));
-    xt(3,:) = filtfilt(b2,a2,xt(3,:));
-
-    xt(4,:) = filtfilt(b2,a2,xt(4,:));
-    xt(5,:) = filtfilt(b2,a2,xt(5,:));
-    xt(6,:) = filtfilt(b2,a2,xt(6,:));
+%     xt(1,:) = filtfilt(b2,a2,xt(1,:));
+%     xt(2,:) = filtfilt(b2,a2,xt(2,:));
+%     xt(3,:) = filtfilt(b2,a2,xt(3,:));
+% 
+%     xt(4,:) = filtfilt(b2,a2,xt(4,:));
+%     xt(5,:) = filtfilt(b2,a2,xt(5,:));
+%     xt(6,:) = filtfilt(b2,a2,xt(6,:));
 
 end
 

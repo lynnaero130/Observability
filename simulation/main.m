@@ -2,12 +2,12 @@
 clc;clear
 % x0 = [-0.5;-0.5;0.5;0;0;0]; % use prediction as initial guess
 x0 = [0;0;0;0;0;0]; % use prediction as initial guess
-xg = [0.5;1;0.7;0;0;0]; % end point
+xg = [0.5;1.2;0.7;0;0;0]; % end point
 rg = 0.01; % position tolerance
 ru = 2; % input constraint
 source = [0;0;0]; % the position of uwb
-dt = 1/25;
-K = 5/dt; %measure times
+dt = 0.04;%1/25;
+K = 2/dt; %measure times
 t = dt*(0:K);
 x_initial_guess = [ones(3,K) ones(3,K) zeros(3,K)];
 % x_initial_guess = rand(3,3*K);
@@ -36,7 +36,7 @@ zlabel('z')
 grid on
 %% 3.1 preprocess
 clc;close all
-sigma_omega =diag([0.001,0.001,0.001])*100; %diag([0,0,0]); % imu noise
+sigma_omega =diag([0.001,0.001,0.001])*10; %diag([0,0,0]); % imu noise
 sigma_v = 0.01;%0; % observation noise
 
 gtd  = [x0 [X(:,K+1:2*K);X(:,2*K+1:3*K)]];
@@ -49,7 +49,7 @@ gtd  = [x0 [X(:,K+1:2*K);X(:,2*K+1:3*K)]];
 uwb = filtfilt(b2,a2,z_measured);
 uwb_v =  [0,0];
 for i = 2:K+1
-    uwb_v(i) = abs(uwb(i)-uwb(i-1))/(dt);
+    uwb_v(i) = (uwb(i)-uwb(i-1))/(dt);%abs(uwb(i)-uwb(i-1))/(dt);
 end
 
 %% 3.2 MHE
@@ -61,16 +61,16 @@ figure(2)
 e_OG = plot_result(t,xt,gtd,'OG\_based');
 
 %% 3.2 LSR to estimate x
-clc;
-x_LSR = [];
-num = 15;
-for i = 1:K-num
-    temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-    x_LSR(:,i) = temp(1:6);
-end
-xt = x_LSR;
-figure(3)
-[~] = plot_result(t(:,1:size(xt,2)),xt,gtd(:,1:size(xt,2)),'OG\_based');
+% clc;
+% x_LSR = [];
+% num = 40;
+% for i = 1:K-num
+%     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+%     x_LSR(:,i) = temp(1:6);
+% end
+% xt = x_LSR;
+% figure(3)
+% [~] = plot_result(t(:,1:size(xt,2)),xt,gtd(:,1:size(xt,2)),'OG\_based');
 %% 4. plot
 figure(4)
 subplot(2,1,1)
