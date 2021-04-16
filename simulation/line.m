@@ -26,7 +26,7 @@ for i = 2:K+1
 end
 %MHE
 % x_estimate = MHE(groundtruth,u_measured,uwb_v, z_measured,dt,K,source);
-x_estimate_line = MHE(gdt_line,u_measured_line,filter_d_line,uwb_v_line,dt,K,gain); 
+x_estimate_line = MHE2(gdt_line,u_measured_line,filter_d_line,uwb_v_line,dt,K,gain); 
 
 figure(3)
 e_line = plot_result(t,x_estimate_line,gdt_line,'line');

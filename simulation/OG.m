@@ -16,6 +16,8 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 grid on
+hold on
+% plot3(d_OG.px,d_OG.py,d_OG.pz,'r--',l_OG.px,l_OG.py,l_OG.pz,'b--')
 % csvwrite('./data/OG.csv',[px' py' pz'])
 %% 3.1 preprocess
 clc;close all
@@ -33,7 +35,7 @@ end
 
 %% 3.2 MHE
 clc
-xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
+xt = MHE2(gtd,imu,uwb,vy,dt,K,gain);
 %plotres
 figure(2)
 [~]  = plot_result(t,xt,gtd,'OG\_based');
