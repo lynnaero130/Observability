@@ -11,7 +11,7 @@ figure(1)
 px = [x0(1) X(1,K+1:2*K)];
 py = [x0(2) X(2,K+1:2*K)];
 pz = [x0(3) X(3,K+1:2*K)];
-plot3(px,py,pz,'om',x0(1),x0(2),x0(3),'dg')
+plot3(px,py,pz,'om',x0(1),x0(2),x0(3),'dg',xg(1),xg(2),xg(3),'*r')
 xlabel('x')
 ylabel('y')
 zlabel('z')
