@@ -15,6 +15,5 @@ sigma_v = 0.1;%0.01;%0; % observation noise
 [b2,a2] = butter(2,5*dt,'low'); 
 % mhe gain
 gain = [10 1 100 0];
-global imu_noise uwb_noise
+global imu_noise, uwb
 imu_noise = sqrt(sigma_omega)*randn(3,K)+0.05*rand(3,K);
-uwb_noise = sqrt(sigma_v)*randn(1);
