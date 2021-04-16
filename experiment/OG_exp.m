@@ -1,15 +1,9 @@
-%% 1. load & Initialize
-clc;clear
-addpath(genpath('../my_function'));
-dt = 1/25;% sampling frequency: 25Hz
-K = 5/dt; %measure times
-time = dt*(0:K-1);
-% mhe gain
-gain = [1 1 1 1];
+% %% 1. load & Initialize
+
 %% 2. load data & preprocess
 name = 'OG';
-filename = ['./data/0411/' name '_1.mat'];
-[gtd_OG,gtd_o,imu_OG,imu_o,y_OG,vy_OG] = preprocess(filename,dt,K);
+filename = ['./data/0411/' name '_2.mat'];
+[gtd_OG,gtd_o,imu_OG,imu_o,y_OG,vy_OG] = preprocess(filename,dt,K,imu_noise);
 %% 3. plot before mhe
 plot_before_mhe(time,gtd_OG,imu_OG,imu_o,y_OG,vy_OG,dt,K) % run the script
 %% 4.1 MHE

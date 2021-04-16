@@ -3,13 +3,13 @@
 %% 2. screw
 p_screw = [x0(1)+(xg(1)-x0(1))*sin(pi*t/(2*K*dt));
            xg(2)+(x0(2)-xg(2))*cos(pi*t/(2*K*dt));
-           (x0(3)+xg(3))/2+(x0(3)-xg(3))*cos(pi*t/(K*dt))/2;];
+           x0(3)+(x0(3)-xg(3))*sin(3*pi*t/(2*K*dt));];
 v_screw = [(xg(1)-x0(1))*pi*cos(pi*t/(2*K*dt))/(2*K*dt);
            (xg(2)-x0(2))*pi*sin(pi*t/(2*K*dt))/(2*K*dt);
-           (xg(3)-x0(3))*pi*sin(pi*t/(K*dt))/(2*K*dt);]; 
+           (x0(3)-xg(3))*3*pi*cos(3*pi*t/(2*K*dt))/(2*K*dt);]; 
 u_screw = [-(xg(1)-x0(1))*pi^2*sin(pi*t/(2*K*dt))/(2*K*dt)^2;
            (xg(2)-x0(2))*pi^2*cos(pi*t/(2*K*dt))/(2*K*dt)^2;
-           (xg(3)-x0(3))*pi^2*cos(pi*t/(K*dt))/2/(K*dt)^2;];
+           -(x0(3)-xg(3))*9*pi^2*sin(3*pi*t/(2*K*dt))/(2*K*dt)^2;];
 
 figure(2)
 plot3(p_screw(1,:),p_screw(2,:),p_screw(3,:),'om',x0(1),x0(2),x0(3),'dg')
@@ -17,7 +17,7 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 grid on
-% csvwrite('./data/screw.csv',[p_screw'])
+csvwrite('./data/screw.csv',[p_screw'])
 %% 3.1 run mhe screw
 X_screw = [u_screw(:,1:K) p_screw(:,2:K+1) v_screw(:,2:K+1)];
 gdt_screw  = [p_screw;v_screw];

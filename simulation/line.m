@@ -2,7 +2,7 @@
 % Initialize
 %% 2. straight line
 p_line = x0(1:3)+(xg(1:3)-x0(1:3))*t/(K*dt);
-v_line = 0.5*ones(3,K+1);
+v_line = (xg(1:3)-x0(1:3))/(K*dt).*ones(1,K+1);
 u_line = zeros(3,K);
 % X_line = [u_line p_line u_line];
 figure(1)
@@ -11,7 +11,7 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 % grid on
-% csvwrite('./data/line.csv',p_line')
+csvwrite('./data/line.csv',[p_line'])
 
 %% 3.1 run mhe line
 X_line = [u_line(:,1:K) p_line(:,2:K+1) v_line(:,2:K+1)];

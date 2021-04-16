@@ -6,7 +6,7 @@ options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',2000
 [X,fval] = fmincon(@(x)OG_obj(x,dt,K),x_initial_guess,[],[],[],[],[],[],@(x)nonlinear_constraint(x,x0,xg,rg,ru,K,dt),options);
 % x(:,1:K) is u_0 ~ u_(K-1); each variable has three elements.
 % x(:,K+1:2K) is p_1 ~ p_K
-% x(:,1:K) is v_1 ~ v_K 
+% x(:,2K+1:3K) is v_1 ~ v_K 
 figure(1)
 px = [x0(1) X(1,K+1:2*K)];
 py = [x0(2) X(2,K+1:2*K)];
@@ -16,6 +16,7 @@ xlabel('x')
 ylabel('y')
 zlabel('z')
 grid on
+csvwrite('./data/OG.csv',[px' py' pz'])
 %% 3.1 preprocess
 clc;close all
 gtd  = [x0 [X(:,K+1:2*K);X(:,2*K+1:3*K)]];

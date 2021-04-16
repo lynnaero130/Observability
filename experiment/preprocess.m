@@ -1,4 +1,4 @@
-function [gtd,gtd_o,imu,imu_o,y,vy] = preprocess(filename,dt,K)
+function [gtd,gtd_o,imu,imu_o,y,vy] = preprocess(filename,dt,K,imu_noise)
 % This function is used to load experimental data and preprocess them.
 [b1,a1] = butter(2,0.04,'low');  % butterworth filter, cutoff frequency: 0.04*25 = 1Hz
 [b3,a3] = butter(2,0.2,'low');  % butterworth filter, cutoff frequency: 0.2*25 = 5Hz
@@ -22,10 +22,9 @@ gtd_100(3,:) = gtd_o(3,:) -0.5397;
 for a=1:K
     gtd(:,a) = gtd_100(:,a*4-3);
 end
-
 %-------------------------------------imu--------------------------------------%
 imu = [];
-imu_tag = 0; % 0 denotes three order deviation; 1 denotes four order deviation, accurate
+imu_tag = 1; % 0 denotes three order deviation; 1 denotes four order deviation, accurate
 if imu_tag == 0
     for a=1:K
     imu(:,a) = (gtd_o(4:6,a*4)-gtd_o(4:6,a*4-3))/0.03; 
@@ -35,7 +34,7 @@ else
     imu(:,a) = (gtd_o(4:6,a*4+1)-gtd_o(4:6,a*4-3))/0.04;
     end
     imu(:,K) = (gtd_o(4:6,K*4)-gtd_o(4:6,a*4-3))/0.03;
-    imu = imu + sqrt(0.01)*randn(3,K);
+    imu = imu + imu_noise;
 end
 imu_o = imu; % store the imu before filter
     %filter imu
@@ -46,16 +45,16 @@ imu_o = imu; % store the imu before filter
 %-------------------------------------uwb--------------------------------------%
 k = find((data.dis(1,:)>=begin_time)&(data.dis(1,:)<=end_time));
 uwb_whole = data.dis(2,k); 
-uwb_tag = 0;
-if uwb_tag == 0    
-     k_1 = find(uwb_whole==100); 
-    uwb_whole(k_1) = uwb_whole(k_1-1);  % wipe out invalid value with the previous value
-    uwb = uwb_whole(1:2:2*K-1);
-else
-    uwb = uwb_whole(1:2:2*K-1);
-    k_1 = find(uwb==100); 
-    gdt_v = sqrt(gtd(1,:).^2+gtd(2,:).^2+gtd(3,:).^2); % wipe out invalid value with gtd
-    uwb(k_1) = gdt_v(k_1);
+uwb = uwb_whole(1:2:2*K-1);
+gdt_v = sqrt(gtd(1,:).^2+gtd(2,:).^2+gtd(3,:).^2); 
+for j = 1:length(uwb)  % wipe out invalid value: 100
+    if (uwb(j)==100)&(j~=1)
+        uwb(j)=uwb(j-1);
+    elseif (uwb(j)==100)&(j==1)
+        uwb(j)=gdt_v(1);
+    else
+        uwb(j)=uwb(j);
+    end
 end
     % filter uwb-distance
     %     y = filtfilt(b1,a1,uwb(1:lopt+2));
