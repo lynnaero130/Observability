@@ -6,7 +6,7 @@ function xt = MHE(gtd,imu, uwb, uwb_v, dt,K,gain)
 % dt: sampling time
 % gain: gamma1~gamma4
 
-opt_length = 8; % use ten data to estimate one position
+opt_length = 16; % use ten data to estimate one position
 options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);
 delta = 2;
 init_i = opt_length+delta; % 11
