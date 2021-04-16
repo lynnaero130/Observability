@@ -23,7 +23,8 @@ ylabel('Velocity')
 set(hl,'Orientation','horizon','Box','on');
 subplot(4,1,4)
 error = groundtruth-estimate;
-error_norm = sqrt(error(1,:).^2 + error(2,:).^2+ error(3,:).^2+ error(4,:).^2+ error(5,:).^2+ error(6,:).^2);
+% error_norm = sqrt(error(1,:).^2 + error(2,:).^2+ error(3,:).^2+ error(4,:).^2+ error(5,:).^2+ error(6,:).^2);
+error_norm = sqrt(error(1,:).^2 + error(2,:).^2+ error(3,:).^2);
 plot(t,error_norm,'k','linewidth', 2)
 xlabel('Time (sec)')
 ylabel('Estimation error (m)')
