@@ -31,12 +31,12 @@ x_estimate_line = MHE2(gdt_line,u_measured_line,filter_d_line,uwb_v_line,dt,K,ga
 figure(3)
 e_line = plot_result(t,x_estimate_line,gdt_line,'line');
 %% 3.2 LSR to estimate x (line)
-% clc;
-% x_LSR = [];
-% num = 15;
-% for i = 1:K-num
-%     temp = estimate_LSR(u_measured_line(:,i:i+num-1),filter_d_line(:,i:i+num),dt);
-%     x_LSR(:,i) = temp(1:6);
-% end
-% figure(3)
-% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gdt_line(:,1:size(x_LSR,2)),'line');
+clc;
+x_LSR = [];
+num = 40;
+for i = 1:K-num
+    temp = estimate_LSR(u_measured_line(:,i:i+num-1),filter_d_line(:,i:i+num),dt);
+    x_LSR(:,i) = temp(1:6);
+end
+figure(3)
+[~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gdt_line(:,1:size(x_LSR,2)),'line');

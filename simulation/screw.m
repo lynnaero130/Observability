@@ -37,12 +37,12 @@ figure(4)
 [~]  = plot_result(t,x_estimate_screw,gdt_screw,'screw');
 
 %% 3.2 LSR to estimate x (screw)
-% clc;
-% x_LSR = [];
-% num = 15;
-% for i = 1:K-num
-%     temp = estimate_LSR(u_measured_screw(:,i:i+num-1),filter_d_screw(:,i:i+num),dt);
-%     x_LSR(:,i) = temp(1:6);
-% end
-% figure(5)
-% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gdt_screw(:,1:size(x_LSR,2)),'screw');
+clc;
+x_LSR = [];
+num = 25;
+for i = 1:K-num
+    temp = estimate_LSR(u_measured_screw(:,i:i+num-1),filter_d_screw(:,i:i+num),dt);
+    x_LSR(:,i) = temp(1:6);
+end
+figure(5)
+[~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gdt_screw(:,1:size(x_LSR,2)),'screw');
