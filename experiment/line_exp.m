@@ -1,22 +1,22 @@
 %% 2. load data & preprocess
 name = 'line';
 filename = ['./data/0411/' name '_2.mat'];
-[gtd_OG,gtd_o,imu_OG,imu_o,y_OG,vy_OG] = preprocess(filename,dt,K,imu_noise);
+[gtd,gtd_o,imu,imu_o,y,vy] = preprocess(filename,dt,K,imu_noise);
 
-for a=1:K
-    gtd(:,a) = gtd_o(:,a*4-3);
-end
-plot(time,gtd(1,:)-line_d(2:end,1)',time,gtd(2,:)-line_d(2:end,2)',time,gtd(3,:)-line_d(2:end,3)')
-legend('x','y','z')
-plot3
+% for a=1:K
+%     gtd(:,a) = gtd_o(:,a*4-3);
+% end
+% plot(time,gtd(1,:)-line_d(2:end,1)',time,gtd(2,:)-line_d(2:end,2)',time,gtd(3,:)-line_d(2:end,3)')
+% legend('x','y','z')
+% plot3
 %% 3. plot before mhe
-plot_before_mhe(time,gtd_OG,imu_OG,imu_o,y_OG,vy_OG,dt,K) % run the script
+plot_before_mhe(time,gtd,imu,imu_o,y,vy,dt,K) % run the script
 %% 4.1 MHE
 clc
-xt_OG = MHE(gtd_OG,imu_OG,y_OG,vy_OG,dt,K-1,gain);
+xt_OG = MHE(gtd,imu,y,vy,dt,K-1,gain);
 %plotres
 figure(5)
-[~]  = plot_result(time,xt_OG,gtd_OG,name);
+[~]  = plot_result(time,xt_OG,gtd,name);
 
 %% 4.2 velocity compensation
 % temp = (y - sqrt(xt(1,:).^2+xt(2,:).^2+xt(3,:).^2));

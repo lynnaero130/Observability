@@ -41,15 +41,15 @@ figure(2)
 [~]  = plot_result(t,xt,gtd,'OG\_based');
 
 %% 3.2 LSR to estimate x
-% clc;
-% x_LSR = [];
-% num = 15;
-% for i = 1:K-num
-%     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-%     x_LSR(:,i) = temp(1:6);
-% end
-% figure(3)
-% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'OG\_based');
+clc;
+x_LSR = [];
+num = 60;
+for i = 1:K-num
+    temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+    x_LSR(:,i) = temp(1:6);
+end
+figure(3)
+[~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'OG\_based');
 %% 4. plot
 % figure(4)
 % subplot(2,1,1)

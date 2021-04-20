@@ -19,30 +19,33 @@ zlabel('z')
 grid on
 % csvwrite('./data/screw.csv',[p_screw'])
 %% 3.1 run mhe screw
-X_screw = [u_screw(:,1:K) p_screw(:,2:K+1) v_screw(:,2:K+1)];
-gdt_screw  = [p_screw;v_screw];
+X = [u_screw(:,1:K) p_screw(:,2:K+1) v_screw(:,2:K+1)];
+gtd  = [p_screw;v_screw];
+
 % measured data
-[z_measured_screw, u_measured_screw] = cal_real(X_screw,x0,sigma_omega,sigma_v,K);
+[z_measured, imu] = cal_real(X,x0,sigma_omega,sigma_v,K);
+
 % % filter distance and velocity
-filter_d_screw = filtfilt(b2,a2,z_measured_screw);
-uwb_v_screw =  [0,0];
+uwb = filtfilt(b2,a2,z_measured);
+vy =  [0,0];
 for i = 2:K+1
-    uwb_v_screw(i) = abs(filter_d_screw(i)-filter_d_screw(i-1))/(dt);
+    vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
 
-%MHE
-x_estimate_screw = MHE(gdt_screw,u_measured_screw,filter_d_screw,uwb_v_screw,dt,K,gain);
-
-figure(4)
-[~]  = plot_result(t,x_estimate_screw,gdt_screw,'screw');
+%% 3.2 MHE
+clc
+xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
+%plotres
+figure(2)
+[~]  = plot_result(t,xt,gtd,'screw');
 
 %% 3.2 LSR to estimate x (screw)
-% clc;
-% x_LSR = [];
-% num = 15;
-% for i = 1:K-num
-%     temp = estimate_LSR(u_measured_screw(:,i:i+num-1),filter_d_screw(:,i:i+num),dt);
-%     x_LSR(:,i) = temp(1:6);
-% end
-% figure(5)
-% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gdt_screw(:,1:size(x_LSR,2)),'screw');
+clc;
+x_LSR = [];
+num = 40;
+for i = 1:K-num
+    temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+    x_LSR(:,i) = temp(1:6);
+end
+figure(5)
+[~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw');
