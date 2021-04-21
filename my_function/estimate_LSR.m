@@ -21,7 +21,7 @@ C = [2*delta_p' second_c' 2*t t.^2];
 temp = delta_p(1,:).^2+delta_p(2,:).^2+delta_p(3,:).^2;
 b = (uwb(:,2:end).^2 - r0^2-temp)';
 
-x = inv(C'*C)*C'*b;
-% x = my_TLS(C,b)
+x = pinv(C'*C)*C'*b;
+% x = my_TLS(C,b);
 
 

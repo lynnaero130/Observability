@@ -1,5 +1,14 @@
 %% 1. Initialize
-% Initialize
+clc;
+clearvars -except imu_noise uwb_noise  dt K sigma_omega sigma_v
+x0 = [-0.5;-0.5;0.5;0;0;0]; % use prediction as initial guess
+% x0 = [0;0;0;0;0;0]; % use prediction as initial guess
+xg = [0.5;1;1.2;0;0;0]; % end point
+rg = 0.01; % position tolerance
+ru = 2; % input constraint
+t = dt*(0:K);
+x_initial_guess = [ones(3,K) ones(3,K) zeros(3,K)];
+[b2,a2] = butter(2,5*dt,'low'); 
 %% 2. OG-based Trajectory Planning Problem
 clc;
 options = optimoptions('fmincon','Algorithm','sqp','MaxFunctionEvaluations',200000);

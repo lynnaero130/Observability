@@ -1,3 +1,5 @@
+%This scipt is used to calculate linear MHE. 
+% Have not been finished.
 clc
 lopt = 8;
 start = 10;

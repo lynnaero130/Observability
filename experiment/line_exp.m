@@ -1,3 +1,7 @@
+%% 1. clear workspace
+clc
+clearvars -except dt K time gain imu_noise
+
 %% 2. load data & preprocess
 name = 'line';
 filename = ['./data/0411/' name '_1.mat'];
@@ -40,8 +44,8 @@ for i = 1:K-num
     temp = estimate_LSR(imu(:,i:i+num-1),y(:,i:i+num),dt);
     x_LSR(:,i) = temp(1:6);
 end
-xt = x_LSR;
-
+figure(6)
+[~] = plot_result(time(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'line\_exp');
 %% 5. plot estimated result
 % close all
 % figure(4)

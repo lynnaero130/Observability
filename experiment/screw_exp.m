@@ -1,16 +1,18 @@
-Initialize
+%% 1. clear workspace
+clc
+clearvars -except dt K time gain imu_noise
 %% 2. load data & preprocess
 name = 'screw';
 filename = ['./data/0411/' name '_1.mat'];
-[gtd_OG,gtd_o,imu_OG,imu_o,y_OG,vy_OG] = preprocess(filename,dt,K,imu_noise);
+[gtd,gtd_o,imu,imu_o,y,vy] = preprocess(filename,dt,K,imu_noise);
 %% 3. plot before mhe
-plot_before_mhe(time,gtd_OG,imu_OG,imu_o,y_OG,vy_OG,dt,K) % run the script
+plot_before_mhe(time,gtd,imu,imu_o,y,vy,dt,K) % run the script
 %% 4.1 MHE
 clc
-xt_OG = MHE(gtd_OG,imu_OG,y_OG,vy_OG,dt,K-1,gain);
+xt = MHE(gtd,imu,y,vy,dt,K-1,gain);
 %plotres
 figure(5)
-[~]  = plot_result(time,xt_OG,gtd_OG,name);
+[~]  = plot_result(time,xt,gtd,name);
 
 %% 4.2 velocity compensation
 % temp = (y - sqrt(xt(1,:).^2+xt(2,:).^2+xt(3,:).^2));
@@ -26,14 +28,15 @@ figure(5)
 % end
 % xt(4:6,:) = xt(4:6,:) + new_v;
 %% 4.3 LSR to estimate x
-% clc;
-% x_LSR = [];
-% num = 15;
-% for i = 1:K-num
-%     temp = estimate_LSR(imu(:,i:i+num-1),y(:,i:i+num),dt);
-%     x_LSR(:,i) = temp(1:6);
-% end
-% xt = x_LSR;
+clc;
+x_LSR = [];
+num = 15;
+for i = 1:K-num
+    temp = estimate_LSR(imu(:,i:i+num-1),y(:,i:i+num),dt);
+    x_LSR(:,i) = temp(1:6);
+end
+figure(6)
+[~] = plot_result(time(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw\_exp');
 
 %% 5. plot estimated result
 % close all
