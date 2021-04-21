@@ -1,6 +1,7 @@
 %% 1. clear workspace
 clc
 clearvars -except dt K time gain imu_noise
+
 %% 2. load data & preprocess
 name = 'OG';
 filename = ['./data/0411/' name '_1.mat'];
