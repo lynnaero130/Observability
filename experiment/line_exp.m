@@ -1,8 +1,9 @@
 %% 2. load data & preprocess
 name = 'line';
-filename = ['./data/0411/' name '_2.mat'];
+filename = ['./data/0411/' name '_1.mat'];
 [gtd,gtd_o,imu,imu_o,y,vy] = preprocess(filename,dt,K,imu_noise);
 
+% line_d = load('../simulation/data/line.csv');
 % for a=1:K
 %     gtd(:,a) = gtd_o(:,a*4-3);
 % end
@@ -32,14 +33,14 @@ figure(5)
 % end
 % xt(4:6,:) = xt(4:6,:) + new_v;
 %% 4.3 LSR to estimate x
-% clc;
-% x_LSR = [];
-% num = 15;
-% for i = 1:K-num
-%     temp = estimate_LSR(imu(:,i:i+num-1),y(:,i:i+num),dt);
-%     x_LSR(:,i) = temp(1:6);
-% end
-% xt = x_LSR;
+clc;
+x_LSR = [];
+num = 40;
+for i = 1:K-num
+    temp = estimate_LSR(imu(:,i:i+num-1),y(:,i:i+num),dt);
+    x_LSR(:,i) = temp(1:6);
+end
+xt = x_LSR;
 
 %% 5. plot estimated result
 % close all

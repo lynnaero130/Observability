@@ -23,7 +23,10 @@ end
 
 C = [2*delta_p' second_c' 2*t t.^2];
 % obj = -abs(det(C'*C));
-eee = eigs(C'*C,8);
+% a(:,1) = svd(C'*C)
+% a(:,2) = svd(C)
+% eee = eigs(C'*C,8);
+eee = svd(C'*C);
 obj = max(eee)/(min(eee)+0.01);
 
 temp = x(1,1:K).^2+x(2,1:K).^2 + x(3,1:K).^2;

@@ -1,11 +1,13 @@
 function [gtd,gtd_o,imu,imu_o,y,vy] = preprocess(filename,dt,K,imu_noise)
-% This function is used to load experimental data and preprocess them.
+% This function is used to load experimental data and preprocess them. :
+% gtd_o: without offset
+% imu_o: without filter
 [b1,a1] = butter(2,0.04,'low');  % butterworth filter, cutoff frequency: 0.04*25 = 1Hz
 [b3,a3] = butter(2,0.2,'low');  % butterworth filter, cutoff frequency: 0.2*25 = 5Hz
 
 data = load(filename);
-i = find(data.counter(2,:)==0);
-begin_time = data.counter(1,i(2));
+i = find(data.counter(2,:)==0); % The first zero denotes hovering.
+begin_time = data.counter(1,i(2)); 
 end_time = data.counter(1,i(2)+125);
 %-------------------------------------vicon--------------------------------------%
 i = find((data.pos(1,:)>=begin_time)&(data.pos(1,:)<=end_time));
@@ -46,12 +48,12 @@ imu_o = imu; % store the imu before filter
 k = find((data.dis(1,:)>=begin_time)&(data.dis(1,:)<=end_time));
 uwb_whole = data.dis(2,k); 
 uwb = uwb_whole(1:2:2*K-1);
-gdt_v = sqrt(gtd(1,:).^2+gtd(2,:).^2+gtd(3,:).^2); 
+gdt_r = sqrt(gtd(1,:).^2+gtd(2,:).^2+gtd(3,:).^2); 
 for j = 1:length(uwb)  % wipe out invalid value: 100
     if (uwb(j)==100)&(j~=1)
         uwb(j)=uwb(j-1);
     elseif (uwb(j)==100)&(j==1)
-        uwb(j)=gdt_v(1);
+        uwb(j)=gdt_r(1);
     else
         uwb(j)=uwb(j);
     end

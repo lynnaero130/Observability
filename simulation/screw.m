@@ -18,7 +18,7 @@ ylabel('y')
 zlabel('z')
 grid on
 % csvwrite('./data/screw.csv',[p_screw'])
-%% 3.1 run mhe screw
+%% 3.1 generate data
 X = [u_screw(:,1:K) p_screw(:,2:K+1) v_screw(:,2:K+1)];
 gtd  = [p_screw;v_screw];
 
@@ -39,10 +39,10 @@ xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
 figure(2)
 [~]  = plot_result(t,xt,gtd,'screw');
 
-%% 3.2 LSR to estimate x (screw)
+%% 3.3 LSR to estimate x (screw)
 clc;
 x_LSR = [];
-num = 40;
+num = 60;
 for i = 1:K-num
     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
     x_LSR(:,i) = temp(1:6);

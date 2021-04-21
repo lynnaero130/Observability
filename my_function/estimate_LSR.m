@@ -1,4 +1,4 @@
-function x= estimate_LSR(imu,uwb,dt)
+function x = estimate_LSR(imu,uwb,dt)
 % This function use LSR to estimate the initial p0,v0
 K = size(imu,2);
 t = dt*(1:K)';
@@ -22,4 +22,6 @@ temp = delta_p(1,:).^2+delta_p(2,:).^2+delta_p(3,:).^2;
 b = (uwb(:,2:end).^2 - r0^2-temp)';
 
 x = inv(C'*C)*C'*b;
+% x = my_TLS(C,b)
+
 

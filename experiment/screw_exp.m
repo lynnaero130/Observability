@@ -1,7 +1,7 @@
 Initialize
 %% 2. load data & preprocess
 name = 'screw';
-filename = ['./data/0411/' name '_2.mat'];
+filename = ['./data/0411/' name '_1.mat'];
 [gtd_OG,gtd_o,imu_OG,imu_o,y_OG,vy_OG] = preprocess(filename,dt,K,imu_noise);
 %% 3. plot before mhe
 plot_before_mhe(time,gtd_OG,imu_OG,imu_o,y_OG,vy_OG,dt,K) % run the script

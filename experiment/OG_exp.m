@@ -1,17 +1,17 @@
-% %% 1. load & Initialize
+%%% 1. load & Initialize
 
 %% 2. load data & preprocess
 name = 'OG';
-filename = ['./data/0411/' name '_2.mat'];
+filename = ['./data/0411/' name '_1.mat'];
 [gtd,gtd_o,imu,imu_o,y,vy] = preprocess(filename,dt,K,imu_noise);
 %% 3. plot before mhe
 plot_before_mhe(time,gtd,imu,imu_o,y,vy,dt,K) % run the script
 %% 4.1 MHE
 clc
-xt_OG = MHE(gtd,imu,y,vy,dt,K-1,gain);
+xt = MHE(gtd,imu,y,vy,dt,K-1,gain);
 %plotres
 figure(5)
-[~]  = plot_result(time,xt_OG,gtd,name);
+[~]  = plot_result(time,xt,gtd,name);
 
 %% 4.2 velocity compensation
 % temp = (y - sqrt(xt(1,:).^2+xt(2,:).^2+xt(3,:).^2));
