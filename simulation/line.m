@@ -33,20 +33,25 @@ vy =  [0,0];
 for i = 2:K+1
     vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
-%% 3.2 MHE
-% x_estimate = MHE(groundtruth,u_measured,uwb_v, z_measured,dt,K,source);
-% xt = MHE3(gtd,imu,uwb,vy,dt,K,gain); 
-xt = MHE(gtd,imu,uwb,vy,dt,K,gain); 
-
-figure(3)
-e_line = plot_result(t,xt,gtd,'line');
-%% 3.3 LSR to estimate x (line)
-clc;
-x_LSR = [];
-num = 40;
-for i = 1:K-num
-    temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-    x_LSR(:,i) = temp(1:6);
-end
-figure(3)
-[~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'line');
+% %% 3.2 MHE
+% % x_estimate = MHE(groundtruth,u_measured,uwb_v, z_measured,dt,K,source);
+% % xt = MHE3(gtd,imu,uwb,vy,dt,K,gain); 
+% xt = MHE(gtd,imu,uwb,vy,dt,K,gain); 
+% 
+% figure(3)
+% e_line = plot_result(t,xt,gtd,'line');
+% %% 3.3 LSR to estimate x (line)
+% clc;
+% x_LSR = [];
+% num = 40;
+% for i = 1:K-num
+% %     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+%     temp = estimate_NLS(imu(:,i:i+num-1),y(:,i:i+num),vy(:,i:i+num),dt);
+%     x_LSR(:,i) = temp(1:6);
+% end
+% figure(3)
+% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'line');
+%% 3.4 Observer
+x_Observer = Observer(imu,uwb,x0,dt);
+figure(6)
+[~]  = plot_result(t,x_Observer,gtd,'line');

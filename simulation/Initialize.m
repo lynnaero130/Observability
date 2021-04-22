@@ -3,7 +3,7 @@ addpath(genpath('../my_function')) % add the path
 dt = 1/25;
 K = 5/dt; %measure times
 sigma_omega =diag([0.001,0.001,0.001])*100; %diag([0,0,0]); % imu noise
-sigma_v = 0.01;%0.01;%0; % observation noise
+sigma_v = 0.001;%0.01;%0; % observation noise
 % mhe gain
 gain = [10 1 100 0];
 global imu_noise uwb_noise

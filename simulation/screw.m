@@ -41,20 +41,26 @@ for i = 2:K+1
     vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
 
-%% 3.2 MHE
-clc
-xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
-%plotres
-figure(2)
-[~]  = plot_result(t,xt,gtd,'screw');
+% %% 3.2 MHE
+% clc
+% xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
+% %plotres
+% figure(2)
+% [~]  = plot_result(t,xt,gtd,'screw');
+% 
+% %% 3.3 LSR to estimate x (screw)
+% clc;
+% x_LSR = [];
+% num = 60;
+% for i = 1:K-num
+% %     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+%     temp = estimate_NLS(imu(:,i:i+num-1),uwb(:,i:i+num),vy(:,i:i+num),dt);
+%     x_LSR(:,i) = temp(1:6);
+% end
+% figure(5)
+% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw');
 
-%% 3.3 LSR to estimate x (screw)
-clc;
-x_LSR = [];
-num = 60;
-for i = 1:K-num
-    temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-    x_LSR(:,i) = temp(1:6);
-end
-figure(5)
-[~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw');
+%% 3.4 Observer
+x_Observer = Observer(imu,uwb,x0,dt);
+figure(6)
+[~]  = plot_result(t,x_Observer,gtd,'screw');

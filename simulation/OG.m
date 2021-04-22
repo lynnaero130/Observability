@@ -42,31 +42,25 @@ for i = 2:K+1
     vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
 
-%% 3.2 MHE
-clc
-xt = MHE2(gtd,imu,uwb,vy,dt,K,gain);
-%plotres
-figure(2)
-[~]  = plot_result(t,xt,gtd,'OG\_based');
-
-%% 3.2 LSR to estimate x
-clc;
-x_LSR = [];
-num = 60;
-for i = 1:K-num
-    temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-    x_LSR(:,i) = temp(1:6);
-end
-figure(3)
-[~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'OG\_based');
-%% 4. plot
-% figure(4)
-% subplot(2,1,1)
-% gdt_d = sqrt(xt(1,:).^2+xt(2,:).^2+xt(3,:).^2);
-% plot(t,uwb,t,gdt_d)
-% legend('|estimate_p| VS |gtd_p|')
-% ylabel('distance')
-% subplot(2,1,2)
-% plot(t,sqrt(xt(4,:).^2+xt(5,:).^2+xt(6,:).^2),'--',t,sqrt(gtd(4,:).^2+gtd(5,:).^2+gtd(6,:).^2),'-.')  
-% legend('estimate_v','gtd_v')
-% title('|estimate_v| VS |gtd_v|')
+% %% 3.2 MHE
+% clc
+% xt = MHE2(gtd,imu,uwb,vy,dt,K,gain);
+% %plotres
+% figure(2)
+% [~]  = plot_result(t,xt,gtd,'OG\_based');
+% 
+% %% 3.3 LSR to estimate x
+% clc;
+% x_LSR = [];
+% num = 60;
+% for i = 1:K-num
+% %     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+%     temp = estimate_NLS(imu(:,i:i+num-1),y(:,i:i+num),vy(:,i:i+num),dt);
+%     x_LSR(:,i) = temp(1:6);
+% end
+% figure(3)
+% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'OG\_based');
+%% 3.4 Observer
+x_Observer = Observer(imu,uwb,x0,dt);
+figure(6)
+[~]  = plot_result(t,x_Observer,gtd,'OG');

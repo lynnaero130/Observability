@@ -1,6 +1,7 @@
-function x = estimate_LSR(imu,uwb,dt)
-% This function use LSR to estimate the initial p0,v0
-% General Least Square Regulation.
+function x = estimate_TLS(imu,uwb,dt)
+% This function use TLS to estimate the initial p0,v0
+% Total Least Square.
+% use Total Least Square to tackle disturbance.
 K = size(imu,2);
 t = dt*(1:K)';
 delta_v(:,1) = imu(:,1)*dt;
@@ -18,14 +19,9 @@ for j = 1:K
  second_c(:,j) =  2*delta_p(:,j).*t(j);  
 end
 r0 = uwb(:,1);
-ra = t(K)./t;
-C = [2*delta_p' second_c' 2*t t.^2].*ra;
+C = [2*delta_p' second_c' 2*t t.^2];
 temp = delta_p(1,:).^2+delta_p(2,:).^2+delta_p(3,:).^2;
-b = (uwb(:,2:end).^2 - r0^2-temp)'.*ra;
-
-D = diag(1./max(abs(C),[],2));
-C = D*C;
-b = D*b;
+b = (uwb(:,2:end).^2 - r0^2-temp)';
 
 x = pinv(C'*C)*C'*b;
 % x = my_TLS(C,b);

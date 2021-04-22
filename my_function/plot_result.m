@@ -8,9 +8,11 @@ legend('x_{hat}','x_g')
 ylabel('Trajectory')
 title(graph_title)
 subplot(4,1,2)
-plot(t,groundtruth(1,:)-groundtruth(1,1),'r-',t,groundtruth(2,:)-groundtruth(2,1),'m-',t,groundtruth(3,:)-groundtruth(3,1),'b-','linewidth', 2)
+% plot(t,groundtruth(1,:)-groundtruth(1,1),'r-',t,groundtruth(2,:)-groundtruth(2,1),'m-',t,groundtruth(3,:)-groundtruth(3,1),'b-','linewidth', 2)
+plot(t,groundtruth(1,:),'r-',t,groundtruth(2,:),'m-',t,groundtruth(3,:),'b-','linewidth', 2)
 hold on
-plot(t,estimate(1,:)-groundtruth(1,1),'r--',t,estimate(2,:)-groundtruth(2,1),'m--',t,estimate(3,:)-groundtruth(3,1),'b--','linewidth', 2)
+% plot(t,estimate(1,:)-groundtruth(1,1),'r--',t,estimate(2,:)-groundtruth(2,1),'m--',t,estimate(3,:)-groundtruth(3,1),'b--','linewidth', 2)
+plot(t,estimate(1,:),'r--',t,estimate(2,:),'m--',t,estimate(3,:),'b--','linewidth', 2)
 hl = legend({'x_g','y_g','z_g','x_{hat}','y_{hat}','z_{hat}'},'Location','northwest');
 ylabel('Position')
 set(hl,'Orientation','horizon','Box','on');
