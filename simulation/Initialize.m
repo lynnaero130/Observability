@@ -9,4 +9,4 @@ gain = [10 10 100 0];
 global imu_noise uwb_noise
 % imu_noise = sqrt(sigma_omega)*randn(3,K)+0.05*rand(3,K);
 imu_noise = sqrt(sigma_omega)*randn(3,K);
-uwb_noise = sqrt(sigma_v)*randn(1);  % used to simulate measured uwb
+uwb_noise = sqrt(sigma_v)*randn(1,K+1);  % used to simulate measured uwb

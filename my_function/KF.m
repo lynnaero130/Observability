@@ -30,18 +30,23 @@ end
 x(:,1) =[x0(1:3,1); x0(4:6,1); x0(1:3,1)'*x0(4:6,1);x0(4:6,1)'*x0(4:6,1)]; % initial estimation
 y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +delta_p(3,:).^2);
 
- for i = 1:K
+ for i = 2:K
      
-     C = [delta_p(:,i)' zeros(1,3) i*dt 0.5*(i*dt)^2];
+     C = [delta_p(:,i-1)' zeros(1,3) (i-1)*dt 0.5*((i-1)*dt)^2];
   
     % prediction
-    x_ = G*x(:,i) + H*imu(:,i); 
-    P_ = G*P{:,i}*G + Q;
+    x_ = G*x(:,i-1) + H*imu(:,i-1); 
+    P_ = G*P{:,i-1}*G' + Q;
 
     %update
-    K = P_*C'*inv(C*P_*C' + R);
-    x(:,i+1) = x_ + K*(y(:,i) - C*x_);
-    P{:,i+1} = (eye(8) - K*C)*P_;
+    Kt = P_*C'*inv(C*P_*C' + R);
+    x(:,i) = x_ + Kt*(y(:,i-1) - C*x_);
+    P{:,i} = (eye(8) - Kt*C)*P_;
     
+ end
+% disp('???')
+%  for j = 1:K
+%     temp(j) = P{1,j}(1,1);
+% end
 end
 

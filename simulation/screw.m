@@ -66,7 +66,8 @@ x_Observer = Observer(imu,uwb,x0,dt);
 figure(6)
 [~]  = plot_result(t,x_Observer,gtd,'screw');
 %% 3.5 KF
+x0 = [x0(1:3);v_screw(:,1)];
 x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
 
 figure(7)
-[~]  = plot_result(t,x_KF(1:6,:),gtd,'screw');
+[~]  = plot_result(t(1:end-1),x_KF(1:6,:),gtd(:,1:end-1),'screw');

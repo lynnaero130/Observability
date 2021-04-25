@@ -11,7 +11,7 @@ p = [x0(1:3) x(:,K+1:2*K)];
 for j = 1:K+1
     x_relative = p(:,j);
 %     z(1,j) = sqrt(x_relative'*x_relative)+sqrt(sigma_v)*randn(1); % measured by uwb, noise
-    z(1,j) = sqrt(x_relative'*x_relative)+uwb_noise; % measured by uwb, noise
+    z(1,j) = sqrt(x_relative'*x_relative)+uwb_noise(j); % measured by uwb, noise
 end
 
 end
