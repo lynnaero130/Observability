@@ -8,6 +8,7 @@ B = [zeros(3,3)
   zeros(2,3)];
 G = eye(8)+A*dt;
 H = (eye(8)*dt+0.5*A*dt^2)*B;
+% H = (0.5*A*dt^2)*B;
 
 %---------- use to calculate delta_p----------%
 K = size(imu,2);
@@ -23,6 +24,7 @@ end
 
 %--------- noise-----------%
  Q = diag([zeros(1,3) diag(sigma_omega)' 0 0]);
+%  Q = eye(8)*sigma_omega(1,1);%diag([zeros(1,3) diag(sigma_omega)' 0 0]);
  R = sigma_v;
  P{1,1} = eye(8); 
  %--------- noise-----------%
@@ -36,12 +38,11 @@ y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +
   
     % prediction
     x_ = G*x(:,i) + H*imu(:,i); 
-    P_ = G*P{:,i}*G + Q;
+    P_ = G*P{:,i}*G' + Q;
 
     %update
-    K = P_*C'*inv(C*P_*C' + R);
-    x(:,i+1) = x_ + K*(y(:,i) - C*x_);
+    KK = P_*C'*inv(C*P_*C' + R);
+    x(:,i+1) = x_ + KK*(y(:,i) - C*x_);
     P{:,i+1} = (eye(8) - K*C)*P_;
-    
 end
 

@@ -68,8 +68,8 @@ uwb=z_measured;
 % x_Observer = Observer(imu,uwb,x0,dt);
 % figure(6)
 % [~]  = plot_result(t,x_Observer,gtd,'OG');
-x0 = [x0(1:3);X(:,2*K+1)]+0.5;
-x_KF = KF(X(:,1:K),uwb,x0,dt,sigma_omega,sigma_v);
+x0 = [x0(1:3);v_screw(:,1)]+0.5;
+x_KF = KF(X(:,K+1:2*K),uwb,x0,dt,sigma_omega,sigma_v);
 
 figure(7)
-[~]  = plot_result(t,x_KF(1:6,:),gtd,'OG');
+[~]  = plot_result(t,x_KF(1:6,:),gtd,'screw');
