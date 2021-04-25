@@ -1,5 +1,6 @@
 function xt = MHE(gtd,imu, uwb, uwb_v, dt,K,gain)
-% This function is used to accomplish MHE.
+% with radial velocity
+
 % gtd: ground truth
 % imu: control input
 % uwb: observation distance

@@ -1,6 +1,6 @@
 %% 1. Initialize
-clc;
-clearvars -except imu_noise uwb_noise  dt K sigma_omega sigma_v
+clc;close all
+clearvars -except imu_noise uwb_noise  dt K sigma_omega sigma_v gain
 x0 = [-0.5;-0.5;0.5;0;0;0]; % use prediction as initial guess
 % x0 = [0;0;0;0;0;0]; % use prediction as initial guess
 xg = [0.5;1;1.2;0;0;0]; % end point
@@ -33,25 +33,31 @@ vy =  [0,0];
 for i = 2:K+1
     vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
-% %% 3.2 MHE
-% % x_estimate = MHE(groundtruth,u_measured,uwb_v, z_measured,dt,K,source);
-% % xt = MHE3(gtd,imu,uwb,vy,dt,K,gain); 
-% xt = MHE(gtd,imu,uwb,vy,dt,K,gain); 
-% 
-% figure(3)
-% e_line = plot_result(t,xt,gtd,'line');
+%% 3.2 MHE
+xt = MHE(gtd,imu,uwb,vy,dt,K,gain); 
+
+figure(3)
+[~] = plot_result(t,xt,gtd,'line');
 % %% 3.3 LSR to estimate x (line)
 % clc;
 % x_LSR = [];
-% num = 40;
+% num = 20;
 % for i = 1:K-num
-% %     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-%     temp = estimate_NLS(imu(:,i:i+num-1),y(:,i:i+num),vy(:,i:i+num),dt);
+%     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+% %     temp = estimate_NLS(imu(:,i:i+num-1),y(:,i:i+num),vy(:,i:i+num),dt);
 %     x_LSR(:,i) = temp(1:6);
 % end
 % figure(3)
-% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'line');
+% [~] = plot_result2(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'line');
 %% 3.4 Observer
+% x0 = [x0(1:3);v_line(:,1)]
 x_Observer = Observer(imu,uwb,x0,dt);
 figure(6)
 [~]  = plot_result(t,x_Observer,gtd,'line');
+
+%% 3.5 KF
+x0 = [x0(1:3);v_line(:,1)];
+x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
+
+figure(7)
+[~]  = plot_result(t,x_KF(1:6,:),gtd,'line');

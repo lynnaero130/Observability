@@ -1,6 +1,6 @@
 %% 1. Initialize
-clc;
-clearvars -except imu_noise uwb_noise dt K sigma_omega sigma_v
+clc;close all
+clearvars -except imu_noise uwb_noise dt K sigma_omega sigma_v gain
 x0 = [-0.5;-0.5;0.5;0;0;0]; % use prediction as initial guess
 % x0 = [0;0;0;0;0;0]; % use prediction as initial guess
 xg = [0.5;1;1.2;0;0;0]; % end point
@@ -41,26 +41,32 @@ for i = 2:K+1
     vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
 
-% %% 3.2 MHE
-% clc
-% xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
-% %plotres
-% figure(2)
-% [~]  = plot_result(t,xt,gtd,'screw');
-% 
+%% 3.2 MHE
+clc
+xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
+%plotres
+figure(2)
+[~]  = plot_result(t,xt,gtd,'screw');
+
 % %% 3.3 LSR to estimate x (screw)
 % clc;
 % x_LSR = [];
-% num = 60;
+% num = 20;
 % for i = 1:K-num
-% %     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-%     temp = estimate_NLS(imu(:,i:i+num-1),uwb(:,i:i+num),vy(:,i:i+num),dt);
+%     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+% %     temp = estimate_NLS(imu(:,i:i+num-1),uwb(:,i:i+num),vy(:,i:i+num),dt);
 %     x_LSR(:,i) = temp(1:6);
 % end
 % figure(5)
-% [~] = plot_result(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw');
+% [~] = plot_result2(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw');
 
 %% 3.4 Observer
+% x0 = [x0(1:3);v_screw(:,1)]
 x_Observer = Observer(imu,uwb,x0,dt);
 figure(6)
 [~]  = plot_result(t,x_Observer,gtd,'screw');
+%% 3.5 KF
+x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
+
+figure(7)
+[~]  = plot_result(t,x_KF(1:6,:),gtd,'screw');

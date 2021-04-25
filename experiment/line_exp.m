@@ -35,9 +35,9 @@ filename = ['./data/0411/' name '_1.mat'];
 % figure(6)
 % [~] = plot_result(time(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'line\_exp');
 %% 4.3 Observer
-x_Observer = Observer(imu(:,1/dt:end),y(:,1/dt:end),gtd(:,1/dt),dt);
-figure(6)
-[~]  = plot_result(time(1/dt:end),x_Observer(:,1:end-1),gtd(:,1/dt:end),'line');
-% x_Observer = Observer(imu,y,gtd(:,1),dt);
+% x_Observer = Observer(imu(:,1/dt:end),y(:,1/dt:end),gtd(:,1/dt),dt);
 % figure(6)
-% [~]  = plot_result(time,x_Observer(:,1:end-1),gtd,'line');
+% [~]  = plot_result(time(1/dt:end),x_Observer(:,1:end-1),gtd(:,1/dt:end),'line');
+x_Observer = Observer(imu,y,gtd(:,1),dt);
+figure(6)
+[~]  = plot_result(time,x_Observer(:,1:end-1),gtd,'line');

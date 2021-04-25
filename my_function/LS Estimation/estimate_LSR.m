@@ -18,16 +18,16 @@ for j = 1:K
  second_c(:,j) =  2*delta_p(:,j).*t(j);  
 end
 r0 = uwb(:,1);
-ra = t(K)./t;
-C = [2*delta_p' second_c' 2*t t.^2].*ra;
+C = [2*delta_p' second_c' 2*t t.^2];
 temp = delta_p(1,:).^2+delta_p(2,:).^2+delta_p(3,:).^2;
-b = (uwb(:,2:end).^2 - r0^2-temp)'.*ra;
+b = (uwb(:,2:end).^2 - r0^2-temp)';
 
-D = diag(1./max(abs(C),[],2));
-C = D*C;
-b = D*b;
-
+% D = diag(1./max(abs(C),[],2));
+% C = D*C;
+% b = D*b;
+% x = inv(C'*C)*C'*b;
 x = pinv(C'*C)*C'*b;
+C*x-b
 % x = my_TLS(C,b);
 
 
