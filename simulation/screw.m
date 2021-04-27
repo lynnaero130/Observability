@@ -13,6 +13,7 @@ x_initial_guess = [ones(3,K) ones(3,K) zeros(3,K)];
 p_screw = [x0(1)+(xg(1)-x0(1))*sin(pi*t/(2*K*dt));
            xg(2)+(x0(2)-xg(2))*cos(pi*t/(2*K*dt));
            (x0(3)+xg(3))/2+(x0(3)-xg(3))*cos(pi*t/(K*dt))/2;];
+
 v_screw = [(xg(1)-x0(1))*pi*cos(pi*t/(2*K*dt))/(2*K*dt);
            (xg(2)-x0(2))*pi*sin(pi*t/(2*K*dt))/(2*K*dt);
            (xg(3)-x0(3))*pi*sin(pi*t/(K*dt))/(2*K*dt);]; 
@@ -43,31 +44,31 @@ end
 
 %% 3.2 MHE
 clc
-xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
-%plotres
-figure(2)
-[~]  = plot_result(t,xt,gtd,'screw');
-
-% %% 3.3 LSR to estimate x (screw)
-% clc;
-% x_LSR = [];
-% num = 20;
-% for i = 1:K-num
-%     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
-% %     temp = estimate_NLS(imu(:,i:i+num-1),uwb(:,i:i+num),vy(:,i:i+num),dt);
-%     x_LSR(:,i) = temp(1:6);
-% end
-% figure(5)
-% [~] = plot_result2(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw');
-
-%% 3.4 Observer
-% x0 = [x0(1:3);v_screw(:,1)]
-x_Observer = Observer(imu,uwb,x0,dt);
-figure(6)
-[~]  = plot_result(t,x_Observer,gtd,'screw');
+% xt = MHE(gtd,imu,uwb,vy,dt,K,gain);
+% %plotres
+% figure(2)
+% [~]  = plot_result(t,xt,gtd,'screw');
+% 
+% % %% 3.3 LSR to estimate x (screw)
+% % clc;
+% % x_LSR = [];
+% % num = 20;
+% % for i = 1:K-num
+% %     temp = estimate_LSR(imu(:,i:i+num-1),uwb(:,i:i+num),dt);
+% % %     temp = estimate_NLS(imu(:,i:i+num-1),uwb(:,i:i+num),vy(:,i:i+num),dt);
+% %     x_LSR(:,i) = temp(1:6);
+% % end
+% % figure(5)
+% % [~] = plot_result2(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw');
+% 
+% %% 3.4 Observer
+% % x0 = [x0(1:3);v_screw(:,1)]
+% x_Observer = Observer(imu,uwb,x0,dt);
+% figure(6)
+% [~]  = plot_result(t,x_Observer,gtd,'screw');
 %% 3.5 KF
 x0 = [x0(1:3);v_screw(:,1)];
-x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
+x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v,gtd);
 
 figure(7)
-[~]  = plot_result(t(1:end-1),x_KF(1:6,:),gtd(:,1:end-1),'screw');
+[~]  = plot_result(t,x_KF(1:6,:),gtd,'screw')

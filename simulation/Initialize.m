@@ -1,8 +1,8 @@
 clc;clear
 addpath(genpath('../my_function')) % add the path
-dt = 1/25;
-K = 5/dt; %measure times
-sigma_omega =diag([0.001,0.001,0.001])*10; %diag([0,0,0]); % imu noise
+dt = 1/100;
+K = 300/dt; %measure times
+sigma_omega =diag([0.001,0.001,0.001])*0; %diag([0,0,0]); % imu noise
 sigma_v = 0.01;%0.01;%0; % observation noise
 % mhe gain
 gain = [10 10 100 0];
