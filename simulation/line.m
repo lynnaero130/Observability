@@ -5,9 +5,12 @@ x0 = [-0.5;-0.5;0.5;0;0;0]; % use prediction as initial guess
 % x0 = [0;0;0;0;0;0]; % use prediction as initial guess
 xg = [0.5;1;1.2;0;0;0]; % end point
 
-x0 = [3;0;0;0;0;0]; % use prediction as initial guess
-% x0 = [0;0;0;0;0;0]; % use prediction as initial guess
-xg = [5;10;12;0;0;0]; % end point
+x0 = [0;0;0;0;0;0]; % use prediction as initial guess
+xg = [50;50;10;0;0;0]; % end point
+
+% x0 = [3;0;0;0;0;0]; % use prediction as initial guess
+% % x0 = [0;0;0;0;0;0]; % use prediction as initial guess
+% xg = [5;10;12;0;0;0]; % end point
 rg = 0.01; % position tolerance
 ru = 2; % input constraint
 t = dt*(0:K);
@@ -30,13 +33,14 @@ zlabel('z')
 X = [u_line(:,1:K) p_line(:,2:K+1) v_line(:,2:K+1)];
 gtd  = [p_line;v_line];
 % measured data
-[z_measured, imu] = cal_real2(X,x0,sigma_omega,sigma_v,K,dt);
+[z_measured, imu, xt] = cal_real2(X,x0,sigma_omega,sigma_v,K,dt);
 
 figure
 
 plot(X(1,K+1:2*K).^2+X(2,K+1:2*K).^2+X(3,K+1:2*K).^2);
 hold on
 plot(z_measured.^2,'r');
+legend('sensor','uwb')
 % return;
 % % filter distance and velocity
 uwb=z_measured;
@@ -69,9 +73,21 @@ uwb=z_measured;
 % [~]  = plot_result(t,x_Observer,gtd,'line');
 
 %% 3.5 KF
-x0 = [x0(1:3);v_line(:,1)]+0.5;
-x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
-% x_KF = KF(u_line,uwb,x0,dt,sigma_omega,sigma_v);
+x0 = [x0(1:3);v_line(:,1)];%/-0.2;
+% imu = imu + imu_noise;
+% x0 = [x0(1:3);zeros(3,1)];
+% x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
+[x_KF,xt1] = KF(u_line,uwb,x0,dt,sigma_omega,sigma_v);
 
 figure(7)
-[~]  = plot_result(t,x_KF(1:6,:),gtd,'line');
+[~]  = plot_result(t,x_KF(1:6,:),xt,'line');
+
+figure(8)
+plot(sqrt(abs(x_KF(8,:))));
+hold on
+plot(x_KF(7,:)./sqrt(abs(x_KF(8,:))),'r');
+% 
+% x_KF1(1:6,:)=x_KF(1:6,:)-xt(1:6,:);
+% 
+ p0=norm(gtd(1:3,1))
+ v0=norm(gtd(4:6,1))
