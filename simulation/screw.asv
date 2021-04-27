@@ -1,9 +1,8 @@
 %% 1. Initialize
 clc;close all
 clearvars -except imu_noise uwb_noise dt K sigma_omega sigma_v gain
-% x0 = [0;0;1;0;0;0]; % use prediction as initial guess
-x0 = [-50;-50;-30;0;0;0]; % use prediction as initial guess
-xg = [50;60;80;0;0;0]; % end point
+x0 = [0;0;1;0;0;0]; % use prediction as initial guess
+xg = [50;10;80;0;0;0]; % end point
 rg = 0.01; % position tolerance
 ru = 2; % input constraint
 t = dt*(0:K);
@@ -20,19 +19,19 @@ u_screw = [-(xg(1)-x0(1))*pi^2*sin(pi*t/(2*K*dt))/(2*K*dt)^2;
            (xg(2)-x0(2))*pi^2*cos(pi*t/(2*K*dt))/(2*K*dt)^2;
            (xg(3)-x0(3))*pi^2*cos(pi*t/(K*dt))/2/(K*dt)^2;];
 
-% figure(2)
-% plot3(p_screw(1,:),p_screw(2,:),p_screw(3,:),'om',x0(1),x0(2),x0(3),'dg',xg(1),xg(2),xg(3),'*r')
-% xlabel('x')
-% ylabel('y')
-% zlabel('z')
-% grid on
+figure(2)
+plot3(p_screw(1,:),p_screw(2,:),p_screw(3,:),'om',x0(1),x0(2),x0(3),'dg',xg(1),xg(2),xg(3),'*r')
+xlabel('x')
+ylabel('y')
+zlabel('z')
+grid on
 % csvwrite('./data/screw.csv',[p_screw'])
 %% 3.1 generate data
 X = [u_screw(:,1:K) p_screw(:,2:K+1) v_screw(:,2:K+1)];
 gtd  = [p_screw;v_screw];
 
 % measured data
-[z_measured, imu,xt] = cal_real2(X,x0,sigma_omega,sigma_v,K,dt); % xt is gdt, imu is real control input, u_screw is measured control input
+[z_measured, imu,xt] = cal_real2(X,x0,sigma_omega,sigma_v,K,dt);
 % figure(3)
 % plot(xt(1,:).^2+xt(2,:).^2+xt(3,:).^2);
 % hold on
@@ -73,26 +72,30 @@ uwb=z_measured;
 % [~]  = plot_result(t,x_Observer,gtd,'screw');
 %% 3.5 KF
 close all;
-% x0 = [x0(1:3);v_screw(:,1)];%+0.5;%-0.2;%+0.01;%+0.02;
-x0 = [xt(1:3,1);xt(4:6,1)];
+x0 = [x0(1:3);v_screw(:,1)];%+0.5;%-0.2;%+0.01;%+0.02;
 x0(1) = x0(1)+5;
-[x_KF,xt1] = KF(u_screw(:,1:K),uwb,x0,dt,sigma_omega,sigma_v);
-
-figure(6)
-plot3(xt(1,:),xt(2,:),xt(3,:),'r',x0(1),x0(2),x0(3),'dg',xg(1),xg(2),xg(3),'*r')
-hold on 
-plot3(xt(1,:),xt(2,:),xt(3,:),'k--')
-legend('real trajectory','desired trajectory')
-xlabel('x')
-ylabel('y')
-zlabel('z')
-grid on
+% x0 = [x0(1:3);zeros(3,1)];
+% % x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
+% imu = imu + imu_noise;
+ratio=1;
+[x_KF,xt1] = KF(u_screw(:,1:K)*ratio,uwb*ratio,x0*ratio,dt,sigma_omega,sigma_v,ratio);
+x_KF = x_KF/ratio;
+xt1 = xt1 /ratio;
+figure(2)
+plot3(xt(1,:),xt(2,:),xt(3,:),'r')
 
 figure(7)
 [~]  = plot_result(t,x_KF(1:6,:),xt,'screw');
-
 figure(8)
-plot(t,x_KF(7,:),'k',t,x0(1:3,1)'*x0(4:6,1)*ones(1,K+1),'k--');
+
+plot(sqrt(abs(x_KF(8,:))));
 hold on
-plot(t,x_KF(8,:),'r',t,x0(4:6,1)'*x0(4:6,1)*ones(1,K+1),'r--');
-legend('est--p0^Tv0','real--p0^Tv0','est--v0^2','real--v0^2')
+plot(x_KF(7,:),'r');
+% 
+% x_KF1(1:6,:)=x_KF(1:6,:)-xt(1:6,:);
+% 
+ p0=norm(gtd(1:3,1))
+ v0=norm(gtd(4:6,1))
+% x_KF1(7,:)=x_KF(7,:)-p0*v0;
+% x_KF1(8,:)=x_KF(8,:)-v0*v0;
+% covx=cov(x_KF1')

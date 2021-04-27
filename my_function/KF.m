@@ -1,66 +1,41 @@
-function [x,xt] = KF(imuu,uwb,x0,dt,sigma_omega,sigma_v,ratio)
+function [x,xt] = KF(imu,uwb,x0,dt,sigma_omega,sigma_v)
 %This function is KF.
 A =[zeros(3,3) eye(3) zeros(3,2)
     zeros(5,8)];
-  
 B = [zeros(3,3)
   eye(3)
   zeros(2,3)];
-G = eye(8)+A*dt
-H = (eye(8)*dt+0.5*A*dt^2)*B
-% H = (0.5*A*dt^2)*B;
+G = eye(8)+A*dt;
+H = (eye(8)*dt+0.5*A*dt^2)*B;
 
 %---------- use to calculate delta_p----------%
-K = size(imuu,2);
-delta_v(:,1) = imuu(:,1)*dt;
+K = size(imu,2);
+delta_v(:,1) = imu(:,1)*dt;
 for i = 2:K
-    delta_v(:,i) = delta_v(:,i-1) + imuu(:,i)*dt;
+    delta_v(:,i) = delta_v(:,i-1) + imu(:,i)*dt;
 end
 
- delta_p(:,1) = 0.5*dt^2*imuu(:,1); % the position variance rised from acc.
+ delta_p(:,1) = 0.5*dt^2*imu(:,1); % the position variance rised from acc.
 for i = 2:K
-    delta_p(:,i) = delta_p(:,i-1) + delta_v(:,i-1)*dt + 0.5*dt^2*imuu(:,i);
+    delta_p(:,i) = delta_p(:,i-1) + delta_v(:,i-1)*dt + 0.5*dt^2*imu(:,i);
 end
-
 %--------- noise-----------%
-%  Q=diag([zeros(1,3) diag(sigma_omega)' 0 0]);
-
-%   Q = diag([diag(sigma_omega)'*0.1 diag(sigma_omega)' 0.001 0.001])*1000;
-%   Q = diag([diag(sigma_omega)'*10 diag(sigma_omega)'*10000 0 0]);
-%  Q = eye(8)*sigma_omega(1,1)*1000;%diag([zeros(1,3) diag(sigma_omega)' 0 0]);
-Q=diag([diag(sigma_omega)' diag(sigma_omega)' sigma_omega(1)*10 sigma_omega(1)]*1000000)*ratio; 
-% Q= eye(8)*100;
+Q=diag([diag(sigma_omega)' diag(sigma_omega)' sigma_omega(1)*10 sigma_omega(1)]*1000000); 
 Q(1,1) = 1000000;
-% Q=[10.7932   22.2699    2.4790    0.1757    0.3345   -0.1271    0.0062   -0.1474
-%    22.2699   46.2485    5.2722    0.3710    0.7125   -0.2729    0.0120   -0.3141
-%     2.4790    5.2722    1.4735    0.0503    0.1366   -0.0251    0.0035   -0.0179
-%     0.1757    0.3710    0.0503    0.0044    0.0063   -0.0018    0.0001   -0.28
-%     0.3345    0.7125    0.1366    0.0063    0.0155   -0.0040    0.0003   -0.42
-%    -0.1271   -0.2729   -0.0251   -0.0018   -0.0040    0.0037   -0.0001    0.24
-%     0.0062    0.0120    0.0035    0.0001    0.0003   -0.0001    1000       10
-%    -0.1474   -0.3141   -0.0179   -0.28      -0.42    0.24       10        100];
+Q(2,2) = 1000000;
+Q(3,3) = 1000000;
 
-
-R = sigma_v*ratio;
-P{1,1} = eye(8)*10^(0)*ratio;
-% P{1,1}(7,7)=1;
-% P{1,1}(8,8)=1;
+R = sigma_v;
+P{1,1} = eye(8)*10^(0);
  
-%   P{1,1} =  [5.0804    0.0010    0.0009    2.0201    0.0005    0.0004    0.0032    0.0095
-%     0.0010    5.0675   -0.0118    0.0004    2.0146   -0.0050   -0.0548   -0.1294
-%     0.0009   -0.0118    5.0698    0.0004   -0.0049    2.0156   -0.0502   -0.1176
-%     2.0201    0.0004    0.0004    1.0001    0.0002    0.0002    0.0012    0.0038
-%     0.0005    2.0146   -0.0049    0.0002    0.9978   -0.0021   -0.0206   -0.0525
-%     0.0004   -0.0050    2.0156    0.0002   -0.0021    0.9982   -0.0188   -0.0478
-%     0.0032   -0.0548   -0.0502    0.0012   -0.0206   -0.0188    0.6534   -0.6397
-%     0.0095   -0.1294   -0.1176    0.0038   -0.0525   -0.0478   -0.6397    0.6584]*10000; %--------- noise-----------%
-%  
+%--------- noise-----------%
+  
 x(:,1) =[x0(1:3,1); x0(4:6,1); x0(1:3,1)'*x0(4:6,1);x0(4:6,1)'*x0(4:6,1)]; % initial estimation
 xt(:,1) =[x0(1:3,1); x0(4:6,1); x0(1:3,1)'*x0(4:6,1);x0(4:6,1)'*x0(4:6,1)]; 
 y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +delta_p(3,:).^2);
 
 % for i=1:K
-%    xt(:,i+1)=G*xt(:,i) + H*imuu(:,i);  
+%    xt(:,i+1)=G*xt(:,i) + H*imu(:,i);  
 % end
 
  for i = 1:K
@@ -71,8 +46,8 @@ y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +
 %     end
   
     % prediction
-    x_ = G*x(:,i) + H*imuu(:,i); 
-    xt(:,i+1)=G*x(:,i) + H*imuu(:,i);  
+    x_ = G*x(:,i) + H*imu(:,i); 
+    xt(:,i+1)=G*x(:,i) + H*imu(:,i);  
     PT=P{:,i};
     P_ = G*P{:,i}*G' + Q;
 %     P_=P_;
@@ -82,11 +57,7 @@ y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +
 %     end
     
     CT=C;  
-%     if(i>100)
-%     CT(1:3)=CT(1:3)./(i*dt)^2;
-%     CT(4:6)=CT(4:6)./(i*dt);
-%     end
-%     qp=CT*P_*CT';
+
     %update
     KK = P_*CT'/(CT*P_*CT' + R);
     if(i==100)
@@ -95,33 +66,14 @@ y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +
        P_
        C
     end
-%     KK = [-0.0005
-%     0.001
-%     0.001
-%     0.001
-%     0.004
-%     0.004
-%     0.015
-%     0.1179];
-%     KK=ones(8,1)*0.01;
-%     KK(7)=0.1;
-%     KK(8)=0.2;
-%     
-%     if(i>200)
-%       KK(1:6)=  KK(1:6)*10;
-%     end
-%     KK=KK*2;
+
     dy =y(:,i) - C*x_;
     Kt=KK;
-%     Kt(1:3)=Kt(1:3)*10;
-%     Kt(4:6)=Kt(4:6)*50;
+
     x(:,i+1) = x_ + Kt*(y(:,i) - C*x_);
-%     delta_p(:,i+1) = x(1:3,i+1)-x(1:3,1)- x(4:6,1)*i*dt;
-%     if(i>200)
-%     C(1:3)=C(1:3)./(i*dt)^2;
-%     end
+
     P{:,i+1} = (eye(8) - KK*CT)*P_;
-%     Q= cov(x');
+
     
 end
 

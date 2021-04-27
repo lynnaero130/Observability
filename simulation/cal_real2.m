@@ -1,5 +1,6 @@
-function [z,u,xt] = cal_real(x,x0,sigma_omega,sigma_v,K,dt)
-% This function is used to calculate the observation result z. 
+function [z,u,xt] = cal_real2(x,x0,sigma_omega,sigma_v,K,dt)
+% gdt is controlled by u+imu_noise £»
+% z is measured distance
 global imu_noise uwb_noise
 % measured accsqrt(sigma_v)*randn(1)elaration
 u = x(:,1:K);
@@ -11,14 +12,14 @@ A = [1, 0, 0, dt, 0, 0;
      0, 0, 1, 0, 0, dt,;
      0, 0, 0, 1, 0, 0;
      0, 0, 0, 0, 1, 0;
-     0, 0, 0, 0, 0, 1;]
+     0, 0, 0, 0, 0, 1;];
   
   B = [0.5*dt^2, 0, 0;
      0, 0.5*dt^2, 0;
      0, 0, 0.5*dt^2;
      dt, 0,  0;
      0,  dt, 0;
-     0,  0, dt;]
+     0,  0, dt;];
  
  x_relative(1:3,1)=x0(1:3);
  x_relative(4:6,1)=x(:,2*K+1);
