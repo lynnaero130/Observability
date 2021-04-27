@@ -28,9 +28,9 @@ end
 %   Q = diag([diag(sigma_omega)'*0.1 diag(sigma_omega)' 0.001 0.001])*1000;
 %   Q = diag([diag(sigma_omega)'*10 diag(sigma_omega)'*10000 0 0]);
 %  Q = eye(8)*sigma_omega(1,1)*1000;%diag([zeros(1,3) diag(sigma_omega)' 0 0]);
-Q=diag([diag(sigma_omega)' diag(sigma_omega)' sigma_omega(1)*100 sigma_omega(1)]*100)*ratio; 
+Q=diag([diag(sigma_omega)' diag(sigma_omega)' sigma_omega(1)*10 sigma_omega(1)]*1000000)*ratio; 
 % Q= eye(8)*100;
-
+Q(1,1) = 1000000;
 % Q=[10.7932   22.2699    2.4790    0.1757    0.3345   -0.1271    0.0062   -0.1474
 %    22.2699   46.2485    5.2722    0.3710    0.7125   -0.2729    0.0120   -0.3141
 %     2.4790    5.2722    1.4735    0.0503    0.1366   -0.0251    0.0035   -0.0179
@@ -42,7 +42,7 @@ Q=diag([diag(sigma_omega)' diag(sigma_omega)' sigma_omega(1)*100 sigma_omega(1)]
 
 
 R = sigma_v*ratio;
-P{1,1} = eye(8)*10^(1)*ratio;
+P{1,1} = eye(8)*10^(0)*ratio;
 % P{1,1}(7,7)=1;
 % P{1,1}(8,8)=1;
  

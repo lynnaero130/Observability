@@ -73,11 +73,13 @@ uwb=z_measured;
 % [~]  = plot_result(t,x_Observer,gtd,'line');
 
 %% 3.5 KF
+close all;
 x0 = [x0(1:3);v_line(:,1)];%/-0.2;
+x0(1) = x0(1)+5;
 % imu = imu + imu_noise;
 % x0 = [x0(1:3);zeros(3,1)];
 % x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
-[x_KF,xt1] = KF(u_line,uwb,x0,dt,sigma_omega,sigma_v);
+[x_KF,xt1] = KF(u_line,uwb,x0,dt,sigma_omega,sigma_v,1);
 
 figure(7)
 [~]  = plot_result(t,x_KF(1:6,:),xt,'line');

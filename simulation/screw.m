@@ -74,7 +74,9 @@ uwb=z_measured;
 % figure(6)
 % [~]  = plot_result(t,x_Observer,gtd,'screw');
 %% 3.5 KF
-x0 = [x0(1:3);v_screw(:,1)]+0.5;%+0.5;%-0.2;%+0.01;%+0.02;
+close all;
+x0 = [x0(1:3);v_screw(:,1)];%+0.5;%-0.2;%+0.01;%+0.02;
+x0(1) = x0(1)+5;
 % x0 = [x0(1:3);zeros(3,1)];
 % % x_KF = KF(imu,uwb,x0,dt,sigma_omega,sigma_v);
 % imu = imu + imu_noise;
@@ -91,7 +93,7 @@ figure(8)
 
 plot(sqrt(abs(x_KF(8,:))));
 hold on
-plot(x_KF(7,:)./sqrt(abs(x_KF(8,:))),'r');
+plot(x_KF(7,:),'r');
 % 
 % x_KF1(1:6,:)=x_KF(1:6,:)-xt(1:6,:);
 % 
