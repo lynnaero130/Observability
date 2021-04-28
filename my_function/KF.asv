@@ -20,17 +20,16 @@ for i = 2:K
     delta_p(:,i) = delta_p(:,i-1) + delta_v(:,i-1)*dt + 0.5*dt^2*imu(:,i);
 end
 %--------- noise-----------%
-Q=diag([diag(sigma_omega)' diag(sigma_omega)' sigma_omega(1)*10 sigma_omega(1)]*1000000); 
-Q(1,1) = 1000000;
-Q(2,2) = 1000000;
-Q(3,3) = 1000000;
-% Q = H*sigma_omega*H';
-% Q = H*sigma_omega*H'*1000;
+% Q=diag([diag(sigma_omega)' diag(sigma_omega)' sigma_omega(1)*10 sigma_omega(1)]*1000000); 
+% Q(1,1) = 1000000;
+% Q(2,2) = 1000000;
+% Q(3,3) = 1000000;
+Q = H*sigma_omega*H';
 
 
 R = sigma_v;
-% P{1,1} = diag([0.01 0.01 0.01 0.01*ones(1,3) 1e-5 1e-5]);
-P{1,1} = diag([0.01 0.01 0.01 0.01*ones(1,3) 1e-5 1e-5])*1000;
+% P{1,1} = eye(8)*10^(0);
+P{1,1} = diag([1 10^3*ones(1,2) 0.01*ones(1,3) 1e-5 1e-5]);
 %--------- noise-----------%
   
 x(:,1) =[x0(1:3,1); x0(4:6,1); x0(1:3,1)'*x0(4:6,1);x0(4:6,1)'*x0(4:6,1)]; % initial estimation
@@ -57,7 +56,7 @@ y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +
     KK = P_*CT'/(CT*P_*CT' + R);
     if(i==100)
        KK
-       P_*CT'
+       C*KK
        P_
        C
     end

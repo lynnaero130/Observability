@@ -8,42 +8,29 @@ xg = [51;1;-300;0;0;0]; % end point
 [b2,a2] = butter(2,5*dt,'low'); 
 %% 2. screw
 t = 0:dt:K*dt;
-% p_screw = [x0(1)-50+50*cos(2*pi*t/150);
-%            x0(2)-50+50*sin(2*pi*t/150);
-%            x0(3) + (xg(3) - x0(3))*t.^2/t(end)^2;];
-% 
-% v_screw = [-50*(2*pi/150)*sin(2*pi*t/150);
-%            50*(2*pi/150)*cos(2*pi*t/150);
-%            2*(xg(3) - x0(3))*t/t(end)^2;]; 
-% u_screw = [-50*(2*pi/150)^2*cos(2*pi*t/150);
-%            -50*(2*pi/150)^2*sin(2*pi*t/150);
-%            2*(xg(3) - x0(3))*ones(1,length(t))/t(end)^2;];
-       
 p_screw = [x0(1)-50+50*cos(2*pi*t/150);
            x0(2)-50+50*sin(2*pi*t/150);
-           x0(3) + (xg(3) - x0(3))*t.^3/t(end)^3;];
+           x0(3) + (xg(3) - x0(3))*t.^2/t(end)^2;];
+
 v_screw = [-50*(2*pi/150)*sin(2*pi*t/150);
            50*(2*pi/150)*cos(2*pi*t/150);
-           3*(xg(3) - x0(3))*t.^2/t(end)^3;]; 
+           2*(xg(3) - x0(3))*t/t(end)^2;]; 
 u_screw = [-50*(2*pi/150)^2*cos(2*pi*t/150);
            -50*(2*pi/150)^2*sin(2*pi*t/150);
-           6*(xg(3) - x0(3))*t/t(end)^3;];
-
+           2*(xg(3) - x0(3))*ones(1,length(t))/t(end)^2;];
 % ------used to testify the v_screw-----%
-% figure(1)
 % v_c(:,1) = [0;0;0];
 % for i = 2:K+1
 %     v_c(:,i) = (p_screw(:,i)-p_screw(:,i-1))/dt;
 % end
-%  plot(t,v_c(3,:),'k-',t,v_screw(3,:),'r--')
+%  plot(t,v_c(1,:),'k-',t,v_screw(1,:),'r--')
 % ------used to testify the v_screw-----%
 % ------used to testify the u_screw-----%
-% figure(2)
 % u_c(:,1) = [0;0;0];
 % for i = 2:K+1
 %     u_c(:,i) = (v_screw(:,i)-v_screw(:,i-1))/dt;
 % end
-% plot(t,u_c(3,:),'k-',t,u_screw(3,:),'r--')
+% plot(t,u_c(1,:),'k-',t,u_screw(1,:),'r--')
 % ------used to testify the u_screw-----%
        
 figure(2)

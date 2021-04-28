@@ -74,8 +74,8 @@ uwb=z_measured;
 %% 3.5 KF
 close all;
 % x0 = [x0(1:3);v_screw(:,1)];%+0.5;%-0.2;%+0.01;%+0.02;
-x0 = [xt(1:3,1);xt(4:6,1)];
-x0(1) = x0(1)+5;
+x0 = [xt(1:3,1);xt(4:6,1)] + [1 1 -1 0 0 0]';
+% x0(1) = x0(1)+5;
 [x_KF,xt1] = KF(u_screw(:,1:K),uwb,x0,dt,sigma_omega,sigma_v);
 
 figure(6)

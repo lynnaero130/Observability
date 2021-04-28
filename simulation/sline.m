@@ -29,15 +29,13 @@ gtd  = [p_line;v_line];
 % measured data
 [z_measured, imu, xt] = cal_real2(X,x0,sigma_omega,sigma_v,K,dt);
 
-figure
-
+figure;
 plot(X(1,K+1:2*K).^2+X(2,K+1:2*K).^2+X(3,K+1:2*K).^2);
 hold on
 plot(z_measured.^2,'r');
 legend('sensor','uwb')
 % return;
 % % filter distance and velocity
-uwb=z_measured;
 uwb = filtfilt(b2,a2,z_measured);
 vy =  [0,0];
 for i = 2:K+1

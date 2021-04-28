@@ -1,4 +1,4 @@
-%-----observable----%
+%-----unobservable----%
 %% 1. Initialize
 clc;close all
 clearvars -except imu_noise uwb_noise K dt sigma_omega sigma_v gain
@@ -7,45 +7,32 @@ xg = [51;1;-300;0;0;0]; % end point
 % t = dt*(0:K);
 [b2,a2] = butter(2,5*dt,'low'); 
 %% 2. screw
+% z is t;
 t = 0:dt:K*dt;
-% p_screw = [x0(1)-50+50*cos(2*pi*t/150);
-%            x0(2)-50+50*sin(2*pi*t/150);
-%            x0(3) + (xg(3) - x0(3))*t.^2/t(end)^2;];
-% 
-% v_screw = [-50*(2*pi/150)*sin(2*pi*t/150);
-%            50*(2*pi/150)*cos(2*pi*t/150);
-%            2*(xg(3) - x0(3))*t/t(end)^2;]; 
-% u_screw = [-50*(2*pi/150)^2*cos(2*pi*t/150);
-%            -50*(2*pi/150)^2*sin(2*pi*t/150);
-%            2*(xg(3) - x0(3))*ones(1,length(t))/t(end)^2;];
-       
-p_screw = [x0(1)-50+50*cos(2*pi*t/150);
-           x0(2)-50+50*sin(2*pi*t/150);
-           x0(3) + (xg(3) - x0(3))*t.^3/t(end)^3;];
-v_screw = [-50*(2*pi/150)*sin(2*pi*t/150);
-           50*(2*pi/150)*cos(2*pi*t/150);
-           3*(xg(3) - x0(3))*t.^2/t(end)^3;]; 
-u_screw = [-50*(2*pi/150)^2*cos(2*pi*t/150);
-           -50*(2*pi/150)^2*sin(2*pi*t/150);
-           6*(xg(3) - x0(3))*t/t(end)^3;];
 
+p_screw = [x0(1)-50+50*cos(2*pi*t/150);
+           x0(2) + 50*sin(2*pi*t/150);
+           x0(3) +  50*sin(2*pi*t/150);];
+v_screw = [-50*(2*pi/150)*sin(2*pi*t/150);
+           (2*pi/150)*50*cos(2*pi*t/150);
+           (2*pi/150)*50*cos(2*pi*t/150);]; 
+u_screw = [-50*(2*pi/150)^2*cos(2*pi*t/150);
+           -(2*pi/150)^2*50*sin(2*pi*t/150);
+           -(2*pi/150)^2*50*sin(2*pi*t/150);];
 % ------used to testify the v_screw-----%
-% figure(1)
 % v_c(:,1) = [0;0;0];
 % for i = 2:K+1
 %     v_c(:,i) = (p_screw(:,i)-p_screw(:,i-1))/dt;
 % end
-%  plot(t,v_c(3,:),'k-',t,v_screw(3,:),'r--')
+%  plot(t,v_c(1,:),'k-',t,v_screw(1,:),'r--')
 % ------used to testify the v_screw-----%
 % ------used to testify the u_screw-----%
-% figure(2)
 % u_c(:,1) = [0;0;0];
 % for i = 2:K+1
 %     u_c(:,i) = (v_screw(:,i)-v_screw(:,i-1))/dt;
 % end
-% plot(t,u_c(3,:),'k-',t,u_screw(3,:),'r--')
-% ------used to testify the u_screw-----%
-       
+% plot(t,u_c(1,:),'k-',t,u_screw(1,:),'r--')
+% ------used to testify the u_screw-----%     
 figure(2)
 plot3(p_screw(1,:),p_screw(2,:),p_screw(3,:),'om',x0(1),x0(2),x0(3),'dg',xg(1),xg(2),xg(3),'*r')
 xlabel('x')
@@ -68,6 +55,7 @@ for i = 2:K+1
 end
 
 %% 3.5 KF
+close all
 x0 = [x0(1:3);v_screw(:,1)] + [1 1 -1 0 0 0]';
 % x0(1) = x0(1)+5;
 x_KF = KF(u_screw(:,1:K),uwb,x0,dt,sigma_omega,sigma_v);
@@ -83,7 +71,7 @@ zlabel('z')
 grid on
 
 figure(7)
-[~]  = plot_result(t,x_KF(1:6,:),gtd,'circular')
+[~]  = plot_result(t,x_KF(1:6,:),gtd,'circular2')
 
 figure(8)
 plot(t,x_KF(7,:),'k',t,x0(1:3,1)'*x0(4:6,1)*ones(1,K+1),'k--');
