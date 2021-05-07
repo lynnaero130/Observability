@@ -66,33 +66,33 @@ uwb=z_measured;
 % % figure(5)
 % % [~] = plot_result2(t(:,1:size(x_LSR,2)),x_LSR,gtd(:,1:size(x_LSR,2)),'screw');
 % 
-% %% 3.4 Observer
-% % x0 = [x0(1:3);v_screw(:,1)]
-% x_Observer = Observer(imu,uwb,x0,dt);
-% figure(6)
-% [~]  = plot_result(t,x_Observer,gtd,'screw');
-%% 3.5 KF
-close all;
-% x0 = [x0(1:3);v_screw(:,1)];%+0.5;%-0.2;%+0.01;%+0.02;
-x0 = [xt(1:3,1);xt(4:6,1)] + [1 1 -1 0 0 0]';
-% x0(1) = x0(1)+5;
-[x_KF,xt1] = KF(u_screw(:,1:K),uwb,x0,dt,sigma_omega,sigma_v);
-
+%% 3.4 Observer
+x0 = [x0(1:3);v_screw(:,1)];
+x_Observer = Observer(imu,uwb,x0,dt);
 figure(6)
-plot3(xt(1,:),xt(2,:),xt(3,:),'r',x0(1),x0(2),x0(3),'dg',xg(1),xg(2),xg(3),'*r')
-hold on 
-plot3(xt(1,:),xt(2,:),xt(3,:),'k--')
-legend('real trajectory','desired trajectory')
-xlabel('x')
-ylabel('y')
-zlabel('z')
-grid on
-
-figure(7)
-[~]  = plot_result(t,x_KF(1:6,:),xt,'screw');
-
-figure(8)
-plot(t,x_KF(7,:),'k',t,x0(1:3,1)'*x0(4:6,1)*ones(1,K+1),'k--');
-hold on
-plot(t,x_KF(8,:),'r',t,x0(4:6,1)'*x0(4:6,1)*ones(1,K+1),'r--');
-legend('est--p0^Tv0','real--p0^Tv0','est--v0^2','real--v0^2')
+[~]  = plot_result(t,x_Observer,gtd,'screw');
+%% 3.5 KF
+% close all;
+% % x0 = [x0(1:3);v_screw(:,1)];%+0.5;%-0.2;%+0.01;%+0.02;
+% x0 = [xt(1:3,1);xt(4:6,1)] + [1 1 -1 0 0 0]';
+% % x0(1) = x0(1)+5;
+% [x_KF,xt1] = KF(u_screw(:,1:K),uwb,x0,dt,sigma_omega,sigma_v);
+% 
+% figure(6)
+% plot3(xt(1,:),xt(2,:),xt(3,:),'r',x0(1),x0(2),x0(3),'dg',xg(1),xg(2),xg(3),'*r')
+% hold on 
+% plot3(xt(1,:),xt(2,:),xt(3,:),'k--')
+% legend('real trajectory','desired trajectory')
+% xlabel('x')
+% ylabel('y')
+% zlabel('z')
+% grid on
+% 
+% figure(7)
+% [~]  = plot_result(t,x_KF(1:6,:),xt,'screw');
+% 
+% figure(8)
+% plot(t,x_KF(7,:),'k',t,x0(1:3,1)'*x0(4:6,1)*ones(1,K+1),'k--');
+% hold on
+% plot(t,x_KF(8,:),'r',t,x0(4:6,1)'*x0(4:6,1)*ones(1,K+1),'r--');
+% legend('est--p0^Tv0','real--p0^Tv0','est--v0^2','real--v0^2')
