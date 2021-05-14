@@ -9,16 +9,16 @@ xg = [51;1;-300;0;0;0]; % end point
 %% 2. screw
 % z is t;
 t = 0:dt:K*dt;
-
-p_screw = [x0(1)-50+50*cos(2*pi*t/150);
-           x0(2) + 50*sin(2*pi*t/150);
-           x0(3) +  50*sin(2*pi*t/150);];
-v_screw = [-50*(2*pi/150)*sin(2*pi*t/150);
-           (2*pi/150)*50*cos(2*pi*t/150);
-           (2*pi/150)*50*cos(2*pi*t/150);]; 
-u_screw = [-50*(2*pi/150)^2*cos(2*pi*t/150);
-           -(2*pi/150)^2*50*sin(2*pi*t/150);
-           -(2*pi/150)^2*50*sin(2*pi*t/150);];
+omega=50;
+p_screw = [x0(1)-50+50*cos(omega*pi*t/150);
+           x0(2) + 50*sin(omega*pi*t/150);
+           x0(3) +  50*sin(omega*pi*t/150);];
+v_screw = [-50*(omega*pi/150)*sin(omega*pi*t/150);
+           (omega*pi/150)*50*cos(omega*pi*t/150);
+           (omega*pi/150)*50*cos(omega*pi*t/150);]; 
+u_screw = [-50*(omega*pi/150)^2*cos(omega*pi*t/150);
+           -(omega*pi/150)^2*50*sin(omega*pi*t/150);
+           -(omega*pi/150)^2*50*sin(omega*pi*t/150);];
 % ------used to testify the v_screw-----%
 % v_c(:,1) = [0;0;0];
 % for i = 2:K+1
@@ -53,10 +53,11 @@ vy =  [0,0];
 for i = 2:K+1
     vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
-
+uwb =z_measured;
 %% 3.5 KF
 close all
 x0 = [x0(1:3);v_screw(:,1)] + [1 1 -1 0 0 0]';
+x0 = xt(:,1) + [1 1 -1 0 0 0]';
 % x0(1) = x0(1)+5;
 x_KF = KF(u_screw(:,1:K),uwb,x0,dt,sigma_omega,sigma_v);
 
@@ -74,7 +75,8 @@ figure(7)
 [~]  = plot_result(t,x_KF(1:6,:),gtd,'circular2')
 
 figure(8)
-plot(t,x_KF(7,:),'k',t,x0(1:3,1)'*x0(4:6,1)*ones(1,K+1),'k--');
+% plot(t,x_KF(7,:),'k',t,x0(1:3,1)'*x0(4:6,1)*ones(1,K+1),'k--');
+plot(t,x_KF(7,:)-xt(1:3,1)'*xt(4:6,1),'k');%,t,x0(1:3,1)'*x0(4:6,1)*ones(1,K+1),'k--');
 hold on
-plot(t,x_KF(8,:),'r',t,x0(4:6,1)'*x0(4:6,1)*ones(1,K+1),'r--');
-legend('est--p0^Tv0','real--p0^Tv0','est--v0^2','real--v0^2')
+plot(t,x_KF(8,:)-xt(4:6,1)'*xt(4:6,1),'r');%,t,x0(4:6,1)'*x0(4:6,1)*ones(1,K+1),'r--');
+legend('est--p0^Tv0','est--v0^2')

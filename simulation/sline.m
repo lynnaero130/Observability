@@ -5,7 +5,7 @@ clearvars -except imu_noise uwb_noise  dt K sigma_omega sigma_v gain
 % x0 = [0;0;0;0;0;0]; % use prediction as initial guess
 % xg = [50;50;10;0;0;0]; % end point
 x0 = [-50;-50;-30;0;0;0]; % use prediction as initial guess
-xg = [50;60;80;0;0;0]; % end point
+xg = [150;160;80;0;0;0]; % end point
 rg = 0.01; % position tolerance
 ru = 2; % input constraint
 t = dt*(0:K);
@@ -41,7 +41,7 @@ vy =  [0,0];
 for i = 2:K+1
     vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
-
+uwb=z_measured;
 %% 3.2 MHE
 % xt = MHE(gtd,imu,uwb,vy,dt,K,gain); 
 % 
@@ -68,6 +68,7 @@ end
 close all;
 x0 = [x0(1:3);v_line(:,1)];% + [1 1 -1 0 0 0];%/-0.2;
 x0(1) = x0(1)+5;
+x0 = [xt(1:3,1);xt(4:6,1)] + [1 1 -1 0 0 0]';
 [x_KF,xt1] = KF(u_line(:,1:K),uwb,x0,dt,sigma_omega,sigma_v);
 
 figure(6)

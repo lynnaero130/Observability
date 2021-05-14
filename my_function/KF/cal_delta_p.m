@@ -10,7 +10,5 @@ function delta_p = cal_delta_p(imu,dt)
         for i = 2:K
             delta_p(:,i) = delta_p(:,i-1) + delta_v(:,i-1)*dt + 0.5*dt^2*imu(:,i);
         end
-
-
 end
 

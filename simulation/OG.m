@@ -44,7 +44,7 @@ vy =  [0,0];
 for i = 2:K+1
     vy(i) = abs(uwb(i)-uwb(i-1))/(dt);
 end
-
+uwb=z_measured;
 %% 3.2 MHE
 % clc
 % xt = MHE(gtd,imu,uwb,vy,dt,K,gain);

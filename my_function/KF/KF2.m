@@ -15,11 +15,11 @@ K = size(imu,2);
 % Q(1,1) = 1000000;
 % Q(2,2) = 1000000;
 % Q(3,3) = 1000000;
-Q = H*sigma_omega*H';
+Q = H*sigma_omega*H'*1000;
 
 R = sigma_v;
-P{1,1} = diag([0.01 0.01 0.01 0.01 0.01 0.005 1e-10 1e-10]);
-% P{1,1} = diag([0.01 0.01 0.01 0.01*ones(1,3) 1e-5 1e-5])*100;
+% P{1,1} = diag([0.01 0.01 0.01 0.01 0.01 0.005 1e-10 1e-10]);
+P{1,1} = diag([0.1 0.1 0.1 0.01*ones(1,3) 1e-5 1e-5])*10;
 %--------- noise-----------%
   
 x(:,1) =[x0(1:3,1); x0(4:6,1); x0(1:3,1)'*x0(4:6,1);x0(4:6,1)'*x0(4:6,1)]; % initial estimation
@@ -28,26 +28,34 @@ for i=1:K
     xt(:,i+1)=G*xt(:,i) + H*imu(:,i); 
 end
 
-period = K;
-iter = period;
+period = 4000;
+delta_p = cal_delta_p(imu,dt);
+iter = 1;
  for i = 1:K
-     iter = iter +1;
-    if mod(i,period)==1
-        if (K-i)>2*period
-            iter = iter-period;
-            delta_p = cal_delta_p(imu(:,i:i+period),dt);
-            y = 0.5*uwb(i+1:i+1+period).^2 - 0.5*uwb(i).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +delta_p(3,:).^2);
-            x(7:8,i) = [x(1:3,i)'*x(4:6,i); x(4:6,i)'*x(4:6,i)];
-            P{:,i} = P{1,1}; 
-        else
-            iter = iter-period;
-            delta_p = cal_delta_p(imu(:,i:end),dt);
-            y = 0.5*uwb(i+1:end).^2 - 0.5*uwb(i).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +delta_p(3,:).^2);
-            x(7:8,i) = [x(1:3,i)'*x(4:6,i); x(4:6,i)'*x(4:6,i)];
-        end
+    
+    if ((mod(i,period)==1) && (i-iter>period))
+        iter = iter + period;
+        delta_p = cal_delta_p(imu(:,iter:end),dt);
+        x(7:8,i) = [x(1:3,iter)'*x(4:6,iter); x(4:6,iter)'*x(4:6,iter)];
+        
+%         if (K-i)>2*period
+%             iter = iter-period;
+%             delta_p = cal_delta_p(imu(:,i:i+period),dt);
+%             y = 0.5*uwb(i+1:i+1+period).^2 - 0.5*uwb(i).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +delta_p(3,:).^2);
+%             x(7:8,i) = [x(1:3,i)'*x(4:6,i); x(4:6,i)'*x(4:6,i)];
+%             P{:,i} = P{1,1}; 
+%         else
+%             iter = iter-period;
+%             delta_p = cal_delta_p(imu(:,i:end),dt);
+%             y = 0.5*uwb(i+1:end).^2 - 0.5*uwb(i).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +delta_p(3,:).^2);
+%             x(7:8,i) = [x(1:3,i)'*x(4:6,i); x(4:6,i)'*x(4:6,i)];
+%         end
     end
+    
+    teval = (i-iter)*dt;
 
-    C = [delta_p(:,iter)' zeros(1,3) iter*dt 0.5*(iter*dt)^2];
+
+    C = [delta_p(:,i-iter+1)' zeros(1,3) teval 0.5*teval^2];
   
     % prediction
     x_ = G*x(:,i) + H*imu(:,i); 
@@ -60,8 +68,10 @@ iter = period;
     KK = P_*CT'/(CT*P_*CT' + R);
 
     Kt=KK;
+    
+    y = 0.5*uwb(i+1).^2 - 0.5*uwb(iter).^2 + 0.5*(delta_p(1,i-iter+1).^2 + delta_p(2,i-iter+1).^2 +delta_p(3,i-iter+1).^2);
 
-    x(:,i+1) = x_ + Kt*(y(:,iter) - C*x_);
+    x(:,i+1) = x_ + Kt*(y - C*x_);
 
     P{:,i+1} = (eye(8) - KK*CT)*P_;
 
