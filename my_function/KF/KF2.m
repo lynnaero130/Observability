@@ -28,7 +28,7 @@ for i=1:K
     xt(:,i+1)=G*xt(:,i) + H*imu(:,i); 
 end
 
-period = 1000;
+period = K;
 iter = period;
  for i = 1:K
      iter = iter +1;

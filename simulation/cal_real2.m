@@ -2,7 +2,7 @@ function [z,u,xt] = cal_real2(x,x0,sigma_omega,sigma_v,K,dt)
 % gdt is controlled by u+imu_noise £»
 % z is measured distance
 global imu_noise uwb_noise
-% measured accsqrt(sigma_v)*randn(1)elaration
+% measured accsqrt(sigma_v)*randn(1)
 u = x(:,1:K);
 % u = u + sqrt(sigma_omega)*randn(3,K)+0.05*rand(3,K); % measured by imu, noise
 u = u + imu_noise; % measured by imu, noise

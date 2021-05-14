@@ -20,14 +20,17 @@ for i = 2:K
     delta_p(:,i) = delta_p(:,i-1) + delta_v(:,i-1)*dt + 0.5*dt^2*imu(:,i);
 end
 %--------- noise-----------%
-% Q=diag([diag(sigma_omega)' diag(sigma_omega)' sigma_omega(1)*10 sigma_omega(1)]*1000000); 
-% Q(1,1) = 1000000;
-% Q(2,2) = 1000000;
-% Q(3,3) = 1000000;
-Q = H*sigma_omega*H';
+% Q = H*sigma_omega*H';
+% Q(7,7) = 1e-12;
+% Q(8,8) = 1e-12;
+Q = diag(1e-3*dt*ones(1,6),1e-12,1e-12).^2;
+Q(7,7) = 1e-12;
+Q(8,8) = 1e-12;
 
-R = sigma_v;
-P{1,1} = diag([0.01 0.01 0.01 0.01 0.01 0.005 1e-10 1e-10]);
+
+R = 100;
+P{1,1} = diag([1 1 1 0.1 0.1 0.1 1 1]);
+% P{1,1} = diag([0.01 0.01 0.01 0.01 0.01 0.005 1e-10 1e-10]);
 % P{1,1} = diag([0.01 0.01 0.01 0.01*ones(1,3) 1e-5 1e-5])*100;
 %--------- noise-----------%
   
@@ -48,21 +51,12 @@ y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +
 
     %update
     KK = P_*CT'/(CT*P_*CT' + R);
-%     if(mod(i,100)==0)
-%         KK
-%         P_
-%         CT
-%     else
-%         1
-%     end
 
-%     dy =y(:,i) - C*x_;
     Kt=KK;
 
     x(:,i+1) = x_ + Kt*(y(:,i) - C*x_);
 
     P{:,i+1} = (eye(8) - KK*CT)*P_;
-
     
  end
  figure
