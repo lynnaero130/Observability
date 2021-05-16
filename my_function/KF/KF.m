@@ -22,7 +22,8 @@ end
 %--------- noise-----------%
 % Q=diag([diag(sigma_omega)'*10 diag(sigma_omega)' sigma_omega(1)*10 sigma_omega(1)*1])*0.00001; 
 
-Q = H*(sigma_omega)*H';
+% Q = H*(sigma_omega)*H';
+Q = diag([1e-5,1e-5,1e-5,1e-5,1e-5,1e-5,1e-6,1e-6].^2);
 
 R = 100;
 
@@ -73,12 +74,16 @@ y = 0.5*uwb(2:end).^2 - 0.5*uwb(1).^2 + 0.5*(delta_p(1,:).^2 + delta_p(2,:).^2 +
      Pz(a) = P{1,a}(3,3);
  end
  subplot(3,1,1)
- plot(t,Px)
+ plot(t,Px,'linewidth',1)
  legend('x')
+ ylabel('cov(p_x)')
 subplot(3,1,2)
- plot(t,Py)
+ plot(t,Py,'linewidth',1)
  legend('y')
+  ylabel('cov(p_y)')
  subplot(3,1,3)
- plot(t,Pz)
+ plot(t,Pz,'linewidth',1)
  legend('z')
+  ylabel('cov(p_z)')
+  
 
