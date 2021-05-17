@@ -33,7 +33,7 @@ u_screw = [-200*(omega*pi/150)^2*cos(omega*pi*t/150);
 figure(1)
 v_c(:,1) = [0;0;0];
 for i = 2:K+1
-    v_c(:,i) = (p_screw(:,i)-p_screw(:,i-1))/dt;
+    v_c(:,i) = (p_screw(:,i)-p_screw(:,i-1))/dt; % first order approixmate
 end
  plot(t,v_c(3,:),'k-',t,v_screw(3,:),'r--')
 % ------used to testify the v_screw-----%
@@ -54,7 +54,7 @@ zlabel('z')
 grid on
 % csvwrite('./data/screw.csv',[p_screw'])
 %% 3.1 generate data
-X = [u_c(:,2:K+1) p_screw(:,1:K) v_c(:,2:K+1)];
+X = [u_screw(:,1:K) p_screw(:,1:K) v_screw(:,1:K)];
 gtd  = [p_screw;v_screw];
 
 % measured data
